@@ -37,8 +37,7 @@ class Host(models.Model):
 class User(AbstractBaseUser, PermissionsMixin):
     REQUIRED_FIELDS = []
     USERNAME_FIELD = ('email')
-    ACCOUNT_USER_MODEL_USERNAME_FIELD = None
-    ACCOUNT_USERNAME_REQUIRED = False
+
     id = models.IntegerField(primary_key=True)
     name = models.CharField(max_length=32)
     username = models.CharField(max_length=32)

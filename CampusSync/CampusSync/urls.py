@@ -17,7 +17,12 @@ Including another URLconf
 from django.contrib import admin
 from django.urls import path, include, re_path
 from event import urls as event_urls
+from user import urls as user_urls
 from rest_framework_swagger.views import get_swagger_view
+from django.conf.urls.static import static
+from django.conf import settings
+
+
 
 
 schema_view = get_swagger_view(title='Pastebin API')
@@ -25,7 +30,7 @@ schema_view = get_swagger_view(title='Pastebin API')
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('event/', include(event_urls)), 
+    path('user/', include(user_urls)), 
     re_path(r'^$', schema_view, name='swagger'),
-    path('', include(event_urls)), 
 
-]
+]+ static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
