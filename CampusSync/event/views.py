@@ -1,67 +1,54 @@
 from django.shortcuts import render, HttpResponse, redirect
-from .models import Event
-
-# Create your views here.
-
-def create_event(request):
-    # Accepting the informations from the form and adding it to the database
-    return redirect('')
-
-def delete_event(request):
-    # This is the part where the host can control the event 
-    return redirect('')
-
-def update_event(request):
-    #Again another crud operation
-    return redirect('')
-
-def display_events(request):
-    events = Event.objects.all()
-    context = {"events" : events}
-    return render(request, "event/home.html", context)
-
-def vote_event(request, event_id):
-    # Write the vote logic here
-    return redirect('')
-
-def show_detail(request, event_id):
-    # When a user click on the event this function will direct the user to the event detail page
-    context = {"event_id" : event_id}
-    return render(request, "event/home.html", context)
-
-
-def search_event(request):
-    # Here we are going to have a searched value with POST method to filter the objects by event name
-    searched = ""
-    events = Event.objects.filter(name__contains = searched)
-    context = {"events" : events}
-    return render(request, "event/home.html", context)
-
-def filter_event(request):
-    # Again here the variable by holds the post value from the filter buttons
-    by = ""
-    if by == "upvote": # assuming the button value is upvote
-        events = Event.objects.order_by('-upvotes')
-    elif by == "recent":
-        events = Event.objects.order_by('-timestamp')
-    else:
-         events = Event.objects.all()
-
-    context = {"events" : events}
-    return render(request, "event/home.html", context)
-
-
-from django.http import JsonResponse
-# from django.shortcuts import render, HttpResponse
+from django.http import Http404, JsonResponse
+from user.models import Host
 from .serializer import EventSerializer
 from .models import Event
 from rest_framework.decorators import api_view, permission_classes
 from rest_framework import permissions
+from rest_framework.response import Response
+from rest_framework import generics
 
-# Create your views here.
-@api_view(['GET'])
+
+@api_view(['POST'])
 @permission_classes((permissions.AllowAny,))
-def get_events(request):
-    events = Event.objects.all()
-    serializer = EventSerializer(events, many=True)
-    return JsonResponse( {'events': serializer.data} )
+def delete_event(request):
+    event_id = request.data['id']
+    event = Event.objects.filter(pk=int(event_id))
+    if event:
+        # event.delete()
+        return JsonResponse({'status': 'succ'})
+    return JsonResponse({'status': 'Err'})
+
+@api_view(['POST'])
+@permission_classes((permissions.AllowAny,))
+def update_event(request):
+
+    event = Event.objects.get(pk=int(request.data['id']))
+    serializer = EventSerializer(event, data=request.data, partial=True)
+    if serializer.is_valid():
+        serializer.save()
+        return JsonResponse( {'events': "succ"} )
+    return Response(serializer.errors)
+    
+
+class EventList(generics.ListCreateAPIView):
+    queryset = Event.objects.all()
+    serializer_class = EventSerializer
+    filterset_fields = ['name', 'description', 'host__hostname',]
+    search_fields = ['name', 'description', 'host__hostname',]
+    # ordering_fields = ['date_created']
+    ordering = ['name']
+
+    def list(self, request):
+        # Note the use of `get_queryset()` instead of `self.queryset`
+        queryset = self.get_queryset()
+        serializer = EventSerializer(queryset, many=True)
+        return Response(serializer.data)
+
+    def create(self, validated_data):
+        event_data = validated_data.pop('host')
+        host = Host.objects.create(**validated_data)
+        Host.objects.create(host=host, **event_data)
+        return host
+    
+ 

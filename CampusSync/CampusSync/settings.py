@@ -41,6 +41,7 @@ INSTALLED_APPS = [
     'event',
     'forum',
     'user',
+    'django_filters',
 ]
 
 MIDDLEWARE = [
@@ -129,9 +130,10 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 REST_FRAMEWORK = {
     # Use Django's standard `django.contrib.auth` permissions,
     # or allow read-only access for unauthenticated users.
-    'DEFAULT_PERMISSION_CLASSES': [
-        'rest_framework.permissions.DjangoModelPermissionsOrAnonReadOnly'
-    ]
+    # 'DEFAULT_PERMISSION_CLASSES': [
+    #     'rest_framework.permissions.DjangoModelPermissionsOrAnonReadOnly'
+    # ],
+    'DEFAULT_FILTER_BACKENDS': ['django_filters.rest_framework.DjangoFilterBackend'],
 }
 
 STATIC_URL = 'static/'
@@ -139,3 +141,6 @@ STATICFILES_DIRS = [BASE_DIR / 'static']
 
 MEDIA_URL='/media/'
 MEDIA_ROOT = BASE_DIR /'media'
+
+# APPEND_SLASH=False
+

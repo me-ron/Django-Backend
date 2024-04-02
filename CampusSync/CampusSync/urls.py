@@ -21,4 +21,5 @@ from event import urls as event_urls
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('', include(event_urls)), 
+
 ]
