@@ -1,4 +1,11 @@
 from django.db import models
+from django.contrib.auth.models import AbstractBaseUser
+from django.contrib.auth.models import UserManager
+from .manager import UserManager as customManager
+from django.contrib.auth.models import PermissionsMixin
+
+
+
 # from event.models import Event
 # Create your models here.
 
@@ -27,9 +34,15 @@ class Host(models.Model):
         return f"{self.hostname}"
 
 
-class User(models.Model):
-    username = models.CharField(max_length=32, primary_key=True)
-    email = models.EmailField()
+class User(AbstractBaseUser, PermissionsMixin):
+    REQUIRED_FIELDS = []
+    USERNAME_FIELD = ('email')
+    ACCOUNT_USER_MODEL_USERNAME_FIELD = None
+    ACCOUNT_USERNAME_REQUIRED = False
+    id = models.IntegerField(primary_key=True)
+    name = models.CharField(max_length=32)
+    username = models.CharField(max_length=32)
+    email = models.EmailField(unique=True)
     password = models.CharField(max_length=256)
     profile_pic = models.ImageField(upload_to='_user/user_profile_pics', default='_user/defaults/default_profile.png', null=True, blank=True)
     # -> many-to-many with Event
@@ -39,6 +52,13 @@ class User(models.Model):
     # questions_answered->dataset from Answer ,, UserObj.answer_set.all() -> answers given
     #  -> many-to-many with Host
     following = models.ManyToManyField(Host, blank=True)
+    is_superuser = models.BooleanField('superuser', default=True)
+    # is_active = models.BooleanField('superuser', default=False)
+    is_staff = models.BooleanField('superuser', default=True)
+
+
+
+    objects = customManager()
 
     def __str__(self) -> str:
         return f"{self.username}"
