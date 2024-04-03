@@ -21,9 +21,8 @@ from user import urls as user_urls
 from rest_framework_swagger.views import get_swagger_view
 from django.conf.urls.static import static
 from django.conf import settings
-
-
-
+from rest_framework_simplejwt.views import TokenObtainPairView, TokenRefreshView
+# from user.views import 
 
 schema_view = get_swagger_view(title='Pastebin API')
 
@@ -32,5 +31,7 @@ urlpatterns = [
     path('event/', include(event_urls)), 
     path('user/', include(user_urls)), 
     re_path(r'^$', schema_view, name='swagger'),
-
+    path('api/token/', TokenObtainPairView.as_view(), name='token_obtain_pair'),
+    path('api/token/refresh/', TokenRefreshView.as_view(), name='token_refresh'),    
+    
 ]+ static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
