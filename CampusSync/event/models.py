@@ -12,13 +12,9 @@ class Event(models.Model):
     poster = models.ImageField(upload_to='_event/posters', default='_event/defaults/default_poster.png', null=True, blank=True)
     upvotes = models.IntegerField(default=0)
     downvotes  = models.IntegerField(default=0)
-    # -> one-to-many from Host or User
-    host = models.ForeignKey(Host, related_name='event_host', on_delete=models.CASCADE)
-    # -> many-to-many with User
-    atendees = models.ManyToManyField(User, related_name='users_attending', blank=True)
-    #forum -> one-to-one with Forum ,, EventObj.forum -> EventForumObj
-    # saved_by -> dataset to User.events_saved,, EventObj.user_set().all() -> savers
-    saved_by = models.ManyToManyField(User, related_name='users_saved', blank=True)
+    host = models.ForeignKey(Host, related_name='events_hosted', on_delete=models.CASCADE)
+    atendees = models.ManyToManyField(User, related_name='events_attending', blank=True)
+    saved_by = models.ManyToManyField(User, related_name='saved_events', blank=True)
 
     def __str__(self) -> str:
         return f"{self.name}"
