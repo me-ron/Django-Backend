@@ -8,19 +8,18 @@ from django.contrib.auth.models import PermissionsMixin
 
 
 class User(AbstractBaseUser, PermissionsMixin):
-    REQUIRED_FIELDS = []
+    REQUIRED_FIELDS = ['password']
     USERNAME_FIELD = ('email')
 
     id = models.IntegerField(primary_key=True)
     name = models.CharField(max_length=32)
     # remove later
     username = models.CharField(max_length=32, default='d_username')
-    email = models.EmailField(unique=True)
-    password = models.CharField(max_length=256)
+    email = models.EmailField(unique=True, null=False, blank=False)
+    password = models.CharField(max_length=256, null=False, blank=False)
     profile_pic = models.ImageField(upload_to='_user/user_profile_pics', default='_user/defaults/default_profile.png', null=True, blank=True)
     is_superuser = models.BooleanField('superuser', default=False)
     is_staff = models.BooleanField('superuser', default=False)
-
 
 
     objects = customManager()
