@@ -22,6 +22,7 @@ from rest_framework_swagger.views import get_swagger_view
 from django.conf.urls.static import static
 from django.conf import settings
 
+from drf_spectacular.views import SpectacularAPIView, SpectacularRedocView, SpectacularSwaggerView
 
 
 
@@ -31,6 +32,10 @@ urlpatterns = [
     path('admin/', admin.site.urls),
     path('event/', include(event_urls)), 
     path('user/', include(user_urls)), 
-    re_path(r'^$', schema_view, name='swagger'),
+    # re_path(r'^$', schema_view, name='swagger'),
+    # path('api/schema/', SpectacularAPIView.as_view(), name='schema'),
+    path('api/schema/swagger-ui/', SpectacularSwaggerView.as_view(url_name='schema'), name='swagger-ui'),
+    path('api/schema/redoc/', SpectacularRedocView.as_view(url_name='schema'), name='redoc'),
+
 
 ]+ static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
