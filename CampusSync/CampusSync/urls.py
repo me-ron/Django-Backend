@@ -18,24 +18,30 @@ from django.contrib import admin
 from django.urls import path, include, re_path
 from event import urls as event_urls
 from user import urls as user_urls
-from rest_framework_swagger.views import get_swagger_view
 from django.conf.urls.static import static
 from django.conf import settings
 
+from rest_framework_simplejwt.views import TokenObtainPairView, TokenRefreshView
 from drf_spectacular.views import SpectacularAPIView, SpectacularRedocView, SpectacularSwaggerView
 
+from rest_framework.schemas import get_schema_view
 
 
-schema_view = get_swagger_view(title='Pastebin API')
 
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('event/', include(event_urls)), 
     path('user/', include(user_urls)), 
-    # re_path(r'^$', schema_view, name='swagger'),
-    # path('api/schema/', SpectacularAPIView.as_view(), name='schema'),
-    path('api/schema/swagger-ui/', SpectacularSwaggerView.as_view(url_name='schema'), name='swagger-ui'),
-    path('api/schema/redoc/', SpectacularRedocView.as_view(url_name='schema'), name='redoc'),
 
+    path('', SpectacularAPIView.as_view(), name='schema'),
+
+    path('api/', SpectacularSwaggerView.as_view(url_name='schema'), name='swagger-ui'),
+    path('api/redoc/', SpectacularRedocView.as_view(url_name='schema'), name='redoc'),
+    
+    path('api/token/', TokenObtainPairView.as_view(), name='token_obtain_pair'),
+    path('api/token/refresh/', TokenRefreshView.as_view(), name='token_refresh'),    
+
+   
+    
 
 ]+ static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
