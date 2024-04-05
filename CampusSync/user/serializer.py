@@ -1,10 +1,10 @@
 from rest_framework import serializers
-from .models import User
+from .models import User, Host
 from django.contrib.auth.hashers import make_password
 
 
 from rest_framework_simplejwt.serializers import TokenObtainPairSerializer
-from rest_framework_simplejwt.views import TokenObtainPairView
+# from rest_framework_simplejwt.views import TokenObtainPairView
 
 class MyTokenObtainPairSerializer(TokenObtainPairSerializer):
     @classmethod
@@ -17,6 +17,22 @@ class MyTokenObtainPairSerializer(TokenObtainPairSerializer):
 
         return token
 
+class HostSerializer(serializers.ModelSerializer):
+
+    id = serializers.IntegerField(
+        read_only=True,
+        )
+    account_pic = serializers.ImageField(required=False, read_only=False)    
+    admins = serializers.PrimaryKeyRelatedField(queryset=User.objects.all(), required=False, many=True)
+    followers = serializers.PrimaryKeyRelatedField(queryset=User.objects.all(), required=False, many=True)
+    notifications = serializers.IntegerField(
+        read_only=True,
+        )
+
+    class Meta:
+        model = Host 
+        fields = '__all__'
+
 class UserSerializer(serializers.ModelSerializer):
 
     password = serializers.CharField(
@@ -26,13 +42,14 @@ class UserSerializer(serializers.ModelSerializer):
         style={'input_type': 'password', 'placeholder': 'Password'}
     )
 
+
     id = serializers.IntegerField(
         read_only=True,
         )
 
     class Meta:
         model = User
-        fields = ['id', 'name', 'email', 'password']
+        fields = '__all__'
 
     def create(self, validated_data):
         validated_data['password'] = make_password(validated_data.get('password'))

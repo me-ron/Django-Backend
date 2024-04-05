@@ -27,7 +27,7 @@ SECRET_KEY = 'django-insecure-%^!8)-fe%$t%34*_-d1!exh2aaz%a9jv(mwqsemk+7@o6&=#jw
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['natty.pythonanywhere.com', 'localhost']
 
 
 # Application definition
@@ -160,8 +160,8 @@ ACCOUNT_USERNAME_REQUIRED = False
 
 
 SPECTACULAR_SETTINGS = {
-    'TITLE': 'Your Project API',
-    'DESCRIPTION': 'Your project description',
+    'TITLE': 'CampusSync API',
+    'DESCRIPTION': 'Api Documentation for CampusSync.',
     'VERSION': '1.0.0',
     'SERVE_INCLUDE_SCHEMA': False,
     # OTHER SETTINGS

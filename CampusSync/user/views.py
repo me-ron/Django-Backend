@@ -1,5 +1,5 @@
-from .serializer import UserSerializer
-from .models import User
+from .serializer import UserSerializer, HostSerializer
+from .models import User, Host
 from rest_framework import viewsets
 from rest_framework.views import APIView
 from rest_framework.response import Response
@@ -15,6 +15,15 @@ class UserViewSet(viewsets.ModelViewSet):
     serializer_class = UserSerializer
 
 
+
+class HostViewSet(viewsets.ModelViewSet):
+    """
+    A simple ViewSet for viewing and editing Events.
+    """
+    queryset = Host.objects.all()
+    serializer_class = HostSerializer
+
+
 class JWTHome(APIView):
     authentication_classes = [JWTAuthentication]
     permission_classes = [IsAuthenticated]
@@ -22,3 +31,4 @@ class JWTHome(APIView):
     def get(self, request):
         content = {'message': 'Hello, World!'}
         return Response(content)
+ 

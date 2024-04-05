@@ -15,7 +15,7 @@ Including another URLconf
     2. Add a URL to urlpatterns:  path('blog/', include('blog.urls'))
 """
 from django.contrib import admin
-from django.urls import path, include, re_path
+from django.urls import path, include
 from event import urls as event_urls
 from user import urls as user_urls
 from django.conf.urls.static import static
@@ -24,18 +24,15 @@ from django.conf import settings
 from rest_framework_simplejwt.views import TokenObtainPairView, TokenRefreshView
 from drf_spectacular.views import SpectacularAPIView, SpectacularRedocView, SpectacularSwaggerView
 
-from rest_framework.schemas import get_schema_view
-
-
 
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('event/', include(event_urls)), 
     path('user/', include(user_urls)), 
 
-    path('', SpectacularAPIView.as_view(), name='schema'),
+    path('api/schema_view', SpectacularAPIView.as_view(), name='schema'),
 
-    path('api/', SpectacularSwaggerView.as_view(url_name='schema'), name='swagger-ui'),
+    path('', SpectacularSwaggerView.as_view(url_name='schema'), name='swagger-ui'),
     path('api/redoc/', SpectacularRedocView.as_view(url_name='schema'), name='redoc'),
     
     path('api/token/', TokenObtainPairView.as_view(), name='token_obtain_pair'),
@@ -44,4 +41,5 @@ urlpatterns = [
    
     
 
-]+ static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
+]+ (static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
++ static(settings.STATIC_URL, document_root=settings.STATIC_ROOT))

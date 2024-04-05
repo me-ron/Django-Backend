@@ -15,6 +15,8 @@ class Event(models.Model):
     host = models.ForeignKey(Host, related_name='events_hosted', on_delete=models.CASCADE)
     atendees = models.ManyToManyField(User, related_name='events_attending', blank=True)
     saved_by = models.ManyToManyField(User, related_name='saved_events', blank=True)
+    notifications = models.IntegerField(default=0)
+    address = models.CharField(max_length=200) 
 
     def __str__(self) -> str:
         return f"{self.name}"
