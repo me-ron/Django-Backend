@@ -25,7 +25,7 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 SECRET_KEY = 'django-insecure-%^!8)-fe%$t%34*_-d1!exh2aaz%a9jv(mwqsemk+7@o6&=#jw'
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = False
+DEBUG = True
 
 ALLOWED_HOSTS = ['natty.pythonanywhere.com', 'localhost'
                  ,'127.0.0.1']
@@ -166,6 +166,12 @@ SPECTACULAR_SETTINGS = {
     'VERSION': '1.0.0',
     'SERVE_INCLUDE_SCHEMA': False,
     # OTHER SETTINGS
+}
+
+SIMPLE_JWT = {
+  # It will work instead of the default serializer(TokenObtainPairSerializer).
+  "TOKEN_OBTAIN_SERIALIZER": "user.serializer.MyTokenObtainPairSerializer",
+  # ...
 }
 
 # CORS_ALLOWED_ORIGINS = [
