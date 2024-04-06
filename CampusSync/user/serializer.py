@@ -29,10 +29,12 @@ class HostSerializer(serializers.ModelSerializer):
     notifications = serializers.IntegerField(
         read_only=True,
         )
+    description = serializers.CharField(required=True)
 
     class Meta:
         model = Host 
-        fields = '__all__'
+        fields = ['id', 'hostname', 'description', 'account_pic'
+                  , 'admins', 'followers', 'notifications']
 
 class UserSerializer(serializers.ModelSerializer):
 

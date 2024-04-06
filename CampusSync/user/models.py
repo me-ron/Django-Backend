@@ -43,6 +43,7 @@ class Address(models.Model):
 class Host(models.Model):
     id = models.IntegerField(primary_key=True)
     hostname = models.CharField(max_length=500)
+    description = models.TextField(default="Default host description...")
     account_pic = models.ImageField(upload_to='_user/host_profile_pics', default='_user/defaults/default_account.png', null=True, blank=True)
     # host_address = models.OneToOneField(Address, related_name='adress_of', blank=True, null=True, on_delete=models.CASCADE) 
     admins = models.ManyToManyField(User, related_name='hosts_owned', blank=True)
@@ -53,15 +54,4 @@ class Host(models.Model):
     def __str__(self) -> str:
         return f"{self.hostname}"
     
-# class Notification(models.Model):
-
-#     notifier_choices = (
-
-#     )
- 
-#     id = models.IntegerField(primary_key=True)
-#     user = models.ForeignKey(User, related_name='notifications', null=False, blank=False, on_delete=models.CASCADE)
-#     notification_from -> hosts.events, question.answers or .question
-#     notification_from_id
-
 
