@@ -46,10 +46,13 @@ class UserSerializer(serializers.ModelSerializer):
     id = serializers.IntegerField(
         read_only=True,
         )
+    notifications = serializers.IntegerField(
+        read_only=True,
+        )
 
     class Meta:
         model = User
-        fields = '__all__'
+        fields = ['id', 'name', 'email', 'password', 'profile_pic', 'notifications']
 
     def create(self, validated_data):
         validated_data['password'] = make_password(validated_data.get('password'))
