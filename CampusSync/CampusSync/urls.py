@@ -24,6 +24,8 @@ from django.conf import settings
 from rest_framework_simplejwt.views import TokenObtainPairView, TokenRefreshView
 from drf_spectacular.views import SpectacularAPIView, SpectacularRedocView, SpectacularSwaggerView
 
+from event.views import custom_404
+handler404 = custom_404
 
 urlpatterns = [
     path('admin/', admin.site.urls),

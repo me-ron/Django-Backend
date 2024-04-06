@@ -1,3 +1,4 @@
+from django.shortcuts import render
 from rest_framework.response import Response
 from .serializer import EventSerializer
 from .models import Event
@@ -35,3 +36,8 @@ def event_notifications(request):
                         'event_notifications': str(event.notifications)})
     
     return Response({'status': 'Failed, no such event'})
+
+
+def custom_404(request, exception):
+    print("$$")
+    return render(request, 'event/404.html', status=404)
