@@ -41,8 +41,8 @@ class Address(models.Model):
         return f"{self.id}"
 
 class Host(models.Model):
-    id = models.IntegerField(primary_key=True)
-    hostname = models.CharField(max_length=500)
+    id = models.BigAutoField(primary_key=True)
+    hostname = models.CharField(max_length=500, unique=True)
     description = models.TextField(default="Default host description...")
     account_pic = models.ImageField(upload_to='_user/host_profile_pics', default='_user/defaults/default_account.png', null=True, blank=True)
     # host_address = models.OneToOneField(Address, related_name='adress_of', blank=True, null=True, on_delete=models.CASCADE) 

@@ -19,7 +19,3 @@ class AnswerViewSet(viewsets.ModelViewSet):
     def get_queryset(self):
         q_id = self.kwargs['question_pk']
         return Answer.objects.filter(question=q_id)
-
-        answer = self.get_object(pk)
-        answer.delete()
-        return Response(status=status.HTTP_204_NO_CONTENT)

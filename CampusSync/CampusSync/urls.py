@@ -18,6 +18,7 @@ from django.contrib import admin
 from django.urls import path, include
 from event import urls as event_urls
 from user import urls as user_urls
+from forum import urls as forum_urls
 from django.conf.urls.static import static
 from django.conf import settings
 
