@@ -1,7 +1,8 @@
-from django.shortcuts import render
+from django.shortcuts import render, get_object_or_404
+
 from rest_framework.response import Response
-from .serializer import EventSerializer
-from .models import Event
+from .serializer import EventSerializer, CommentSerializer
+from .models import Event, Comment
 from user.models import Host
 # from drf_yasg.utils import swagger_auto_schema
 from rest_framework import viewsets
@@ -9,6 +10,7 @@ from rest_framework.decorators import api_view
 from drf_spectacular.utils import extend_schema, OpenApiExample, inline_serializer
 
 from rest_framework import status
+from rest_framework import generics
 
 
 class EventViewSet(viewsets.ModelViewSet):
@@ -17,7 +19,6 @@ class EventViewSet(viewsets.ModelViewSet):
     """
     queryset = Event.objects.all()
     serializer_class = EventSerializer
-
 
     def create(self, request, *args, **kwargs):
         # Check if 'host_id' is provided in the request data
@@ -39,12 +40,9 @@ class EventViewSet(viewsets.ModelViewSet):
         # Create the event object
         self.perform_create(serializer)
 
-        # Add host object as a foreign key to the event
-        # event_instance = self.get_object()
         event_instance = serializer.instance
 
         event_instance.host = host_instance
-        event_instance.save()
 
         headers = self.get_success_headers(serializer.data)
         return Response(serializer.data, status=status.HTTP_201_CREATED, headers=headers)
@@ -110,3 +108,22 @@ def search(request):
 
 
 
+class CommentCreateView(generics.CreateAPIView):
+    queryset = Comment.objects.all()
+    serializer_class = CommentSerializer
+    # permission_classes = [permissions.IsAuthenticatedOrReadOnly]  # Adjust as needed
+
+    def perform_create(self, serializer):
+        # Automatically handle event association and other fields if needed
+        serializer.save()
+
+class EventCommentListView(generics.ListAPIView):
+    serializer_class = CommentSerializer
+
+    def get_queryset(self):
+        """
+        This view returns a list of all comments for an event as determined by the event_id portion of the URL.
+        """
+        event_id = self.kwargs['event_id']
+        event = get_object_or_404(Event, id=event_id)
+        return Comment.objects.filter(event=event)

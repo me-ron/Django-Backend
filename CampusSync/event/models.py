@@ -21,3 +21,14 @@ class Event(models.Model):
     def __str__(self) -> str:
         return f"{self.name}"
     
+
+class Comment(models.Model):
+    id = models.IntegerField(primary_key=True)
+    content = models.TextField()
+    date_posted = models.DateTimeField(auto_now_add=True)
+    upvotes = models.IntegerField(default=0)
+    downvotes  = models.IntegerField(default=0)
+    event = models.ForeignKey(Event, related_name='comments', on_delete=models.CASCADE)    
+
+    def __str__(self) -> str:
+        return f"{self.id}"
