@@ -15,6 +15,28 @@ class EventViewSet(viewsets.ModelViewSet):
     queryset = Event.objects.all()
     serializer_class = EventSerializer
 
+    def update_notifications(self, request):
+        print(request.data)
+        event_id = request.data['event_id']
+        event = Event.objects.filter(pk=event_id)
+
+        if request.method == 'GET' and event:
+            return Response({'status': 'succesful get',
+                            'event_id': str(event_id),
+                            'event_notifications': str(event.notifications)})
+        
+        elif request.method == 'POST' and event:
+            change = request.data[change]
+            event.notifications = event.notifications + int(change)
+            event.save()
+
+            return Response({'status': 'succesful post',
+                            'event_id': str(event_id),
+                            'event_notifications': str(event.notifications)})
+        
+        return Response({'status': 'Failed, no such event'})
+
+
 @api_view(['GET','POST']) 
 def event_notifications(request):
     print(request.data)
@@ -37,6 +59,21 @@ def event_notifications(request):
     
     return Response({'status': 'Failed, no such event'})
 
+
+@extend_schema(responses=EventSerializer, request={"prompt": "prompt"}
+               ,description='Takes prompt, returns event searched by name using the sent prompt.')
+@api_view(['GET']) 
+def event_search(request):
+    try:
+        prompt = request.data['prompt']
+        events = Event.objects.filter(name__contains=str(prompt))
+        serializer = EventSerializer(events, many=True)
+
+        return Response({'events': serializer.data})
+    except KeyError:
+        return Response({'events': [],
+                        'status': 'Failed',
+                         'prompt': 'no prompt sent in body.'})
 
 def custom_404(request, exception):
     print("$$")

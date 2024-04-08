@@ -6,6 +6,8 @@ from rest_framework.response import Response
 from rest_framework.permissions import IsAuthenticated
 from rest_framework_simplejwt.authentication import JWTAuthentication
 
+from rest_framework import status
+
  
 class UserViewSet(viewsets.ModelViewSet):
     """
@@ -23,6 +25,23 @@ class HostViewSet(viewsets.ModelViewSet):
     queryset = Host.objects.all()
     serializer_class = HostSerializer
 
+    def create(self, request, *args, **kwargs):
+        serializer = self.get_serializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+        
+        # Get the user_id from the request data
+        user_id = request.data.get('user_id')
+
+        # Call super().create() to properly perform creation
+        self.perform_create(serializer)
+
+        # Add the user to the admins field of the host
+        host_instance = serializer.instance
+        user_instance = User.objects.get(pk=user_id)  # Assuming User model exists
+        host_instance.admins.add(user_instance)
+        
+        headers = self.get_success_headers(serializer.data)
+        return Response(serializer.data, status=status.HTTP_201_CREATED, headers=headers)
 
 class JWTHome(APIView):
     authentication_classes = [JWTAuthentication]
