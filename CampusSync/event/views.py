@@ -2,10 +2,13 @@ from django.shortcuts import render
 from rest_framework.response import Response
 from .serializer import EventSerializer
 from .models import Event
+from user.models import Host
 # from drf_yasg.utils import swagger_auto_schema
 from rest_framework import viewsets
 from rest_framework.decorators import api_view
 from drf_spectacular.utils import extend_schema, OpenApiExample, inline_serializer
+
+from rest_framework import status
 
 
 class EventViewSet(viewsets.ModelViewSet):
@@ -15,27 +18,36 @@ class EventViewSet(viewsets.ModelViewSet):
     queryset = Event.objects.all()
     serializer_class = EventSerializer
 
-    def update_notifications(self, request):
-        print(request.data)
-        event_id = request.data['event_id']
-        event = Event.objects.filter(pk=event_id)
 
-        if request.method == 'GET' and event:
-            return Response({'status': 'succesful get',
-                            'event_id': str(event_id),
-                            'event_notifications': str(event.notifications)})
-        
-        elif request.method == 'POST' and event:
-            change = request.data[change]
-            event.notifications = event.notifications + int(change)
-            event.save()
+    def create(self, request, *args, **kwargs):
+        # Check if 'host_id' is provided in the request data
+        if 'host_id' not in request.data:
+            return Response({"host_id": ["This field is required."]}, status=status.HTTP_400_BAD_REQUEST)
 
-            return Response({'status': 'succesful post',
-                            'event_id': str(event_id),
-                            'event_notifications': str(event.notifications)})
-        
-        return Response({'status': 'Failed, no such event'})
+        serializer = self.get_serializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
 
+        # Get host_id from the request data
+        host_id = request.data.get('host_id')
+
+        # Validate if the host exists
+        try:
+            host_instance = Host.objects.get(pk=host_id)
+        except Host.DoesNotExist:
+            return Response({"host_id": ["Invalid host ID."]}, status=status.HTTP_400_BAD_REQUEST)
+
+        # Create the event object
+        self.perform_create(serializer)
+
+        # Add host object as a foreign key to the event
+        # event_instance = self.get_object()
+        event_instance = serializer.instance
+
+        event_instance.host = host_instance
+        event_instance.save()
+
+        headers = self.get_success_headers(serializer.data)
+        return Response(serializer.data, status=status.HTTP_201_CREATED, headers=headers)
 
 @api_view(['GET','POST']) 
 def event_notifications(request):
