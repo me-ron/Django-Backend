@@ -32,7 +32,7 @@ urlpatterns = [
     path('admin/', admin.site.urls),
     path('event/', include(event_urls)), 
     path('user/', include(user_urls)), 
-    path('forum/', include(forum_urls)), 
+    path('forum/', include('forum.urls')),
 
     path('api/schema_view', SpectacularAPIView.as_view(), name='schema'),
 
