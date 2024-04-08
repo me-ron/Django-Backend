@@ -6,5 +6,4 @@ urlpatterns = [
     path('questions/<int:pk>/', QuestionDetail.as_view(), name='question-detail'),
     path('answers/', AnswerList.as_view(), name='answer-list'),
     path('answers/<int:pk>/', AnswerDetail.as_view(), name='answer-detail'),
-    path('forum/', include('forum.urls')),
 ]

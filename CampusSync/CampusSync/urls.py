@@ -18,6 +18,7 @@ from django.contrib import admin
 from django.urls import path, include
 from event import urls as event_urls
 from user import urls as user_urls
+from forum import urls as forum_urls
 from django.conf.urls.static import static
 from django.conf import settings
 
@@ -31,6 +32,7 @@ urlpatterns = [
     path('admin/', admin.site.urls),
     path('event/', include(event_urls)), 
     path('user/', include(user_urls)), 
+    path('forum/', include(forum_urls)), 
 
     path('api/schema_view', SpectacularAPIView.as_view(), name='schema'),
 

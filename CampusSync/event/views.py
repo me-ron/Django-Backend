@@ -102,7 +102,7 @@ def order_by_upvote(request):
     if request.method != 'GET':
         return Response(status=status.HTTP_405_METHOD_NOT_ALLOWED)
     
-    events = Event.objects.order_by("-upvote")
+    events = Event.objects.order_by("-s")
     return Response(events.values())
 
 @api_view(['GET'])
@@ -110,7 +110,7 @@ def order_by_downvote(request):
     if request.method != 'GET':
         return Response(status=status.HTTP_405_METHOD_NOT_ALLOWED)
     
-    events = Event.objects.order_by("-downvote")
+    events = Event.objects.order_by("-downvotes")
     return Response(events.values())
 
 
