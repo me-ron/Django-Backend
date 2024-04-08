@@ -54,7 +54,7 @@ def order_by_recent(request):
     if request.method != 'GET':
         return Response(status=status.HTTP_405_METHOD_NOT_ALLOWED)
     
-    events = Event.objects.order_by("-recent")
+    events = Event.objects.order_by("-date_posted")
     return Response(events.values())
 
 @api_view(['GET'])
@@ -62,7 +62,7 @@ def order_by_old(request):
     if request.method != 'GET':
         return Response(status=status.HTTP_405_METHOD_NOT_ALLOWED)
     
-    events = Event.objects.order_by("recent")
+    events = Event.objects.order_by("date_posted")
     return Response(events.values())
 
 
@@ -82,22 +82,6 @@ def order_by_downvote(request):
     events = Event.objects.order_by("-downvotes")
     return Response(events.values())
 
-
-
-# @extend_schema(responses=EventSerializer, request={"prompt": "prompt"}
-#                ,description='Takes prompt, returns event searched by name using the sent prompt.')
-# @api_view(['GET']) 
-# def event_search(request):
-#     try:
-#         prompt = request.data['prompt']
-#         events = Event.objects.filter(name__contains=str(prompt))
-#         serializer = EventSerializer(events, many=True)
-
-#         return Response({'events': serializer.data})
-#     except KeyError:
-#         return Response({'events': [],
-#                         'status': 'Failed',
-#                          'prompt': 'no prompt sent in body.'})
 
 def custom_404(request, exception):
     print("$$")
