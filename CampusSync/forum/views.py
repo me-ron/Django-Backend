@@ -1,10 +1,7 @@
 from django.shortcuts import render
-from rest_framework.views import APIView
-from rest_framework.response import Response
-from rest_framework import status, viewsets, permissions
+from rest_framework import viewsets, permissions
 from .models import Question, Answer
 from .serializers import QuestionSerializer, AnswerSerializer
-from django.http import Http404
 
 
 class QuestionViewSet(viewsets.ModelViewSet):
@@ -18,4 +15,4 @@ class AnswerViewSet(viewsets.ModelViewSet):
 
     def get_queryset(self):
         q_id = self.kwargs['question_pk']
-        return Answer.objects.filter(question=q_id)
+        return Answer.objects.filter(question=q_id).order_by('-upvotes')
