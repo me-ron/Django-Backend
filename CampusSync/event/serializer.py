@@ -1,6 +1,6 @@
 from rest_framework import serializers
 
-from .models import Event
+from .models import Event, Comment
 from user.models import Host, User
 
 
