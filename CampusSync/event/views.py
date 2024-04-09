@@ -1,7 +1,8 @@
 from django.shortcuts import render, get_object_or_404
 
 from rest_framework.response import Response
-from .serializer import EventSerializer, CommentSerializer
+
+from .serializer import EventSerializer, CommentSerializer, AttendeesSerializer
 from .models import Event, Comment
 from user.models import Host
 # from drf_yasg.utils import swagger_auto_schema
@@ -105,7 +106,12 @@ def search(request):
     # Return the list of events
     return Response(events.values()) 
 
-
+class RSVPviewset(viewsets.ModelViewSet):
+    serializer_class = AttendeesSerializer
+    def get_queryset(self):
+        e_id = self.kwargs['event_pk']
+        return Event.objects.get(event=e_id).atendees.all()
+    
 
 
 class CommentCreateView(generics.CreateAPIView):

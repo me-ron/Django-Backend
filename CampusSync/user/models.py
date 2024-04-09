@@ -44,7 +44,7 @@ class Host(models.Model):
     id = models.BigAutoField(primary_key=True)
     hostname = models.CharField(max_length=500, unique=True)
     description = models.TextField(default="Default host description...")
-    account_pic = models.ImageField(upload_to='_user/host_profile_pics', default='_user/defaults/default_account.png', null=True, blank=True)
+    account_pic = models.ImageField(upload_to='_user/host_profile_pics', default='_user/defaults/default_account.png')
     # host_address = models.OneToOneField(Address, related_name='adress_of', blank=True, null=True, on_delete=models.CASCADE) 
     admins = models.ManyToManyField(User, related_name='hosts_owned', blank=True)
     followers = models.ManyToManyField(User, related_name='following', blank=True)
