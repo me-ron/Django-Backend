@@ -11,8 +11,8 @@ class Question(models.Model):
     modified_date = models.DateTimeField(auto_now=True)
     upvotes = models.PositiveIntegerField(default=0)
     downvotes = models.PositiveIntegerField(default=0)
-    upvoted_users = models.ManyToManyField(User, related_name='upvoted_questions', blank=True)
-    downvoted_users = models.ManyToManyField(User, related_name='downvoted_questions', blank=True)
+    upvoted_users = models.ManyToManyField(User, related_name='upvoted_question', blank=True)
+    downvoted_users = models.ManyToManyField(User, related_name='downvoted_question', blank=True)
 
     def __str__(self):
         return f"Answer {self.pk}"
@@ -42,8 +42,8 @@ class Answer(models.Model):
     answered_by_host = models.BooleanField(default=False)
     upvotes = models.PositiveIntegerField(default = 0)
     downvotes = models.PositiveIntegerField(default = 0)
-    upvoted_users = models.ManyToManyField(User, related_name='upvoted_answers', blank=True)
-    downvoted_users = models.ManyToManyField(User, related_name='downvoted_answers', blank=True)
+    upvoted_users = models.ManyToManyField(User, related_name='upvoted_answer', blank=True)
+    downvoted_users = models.ManyToManyField(User, related_name='downvoted_answer', blank=True)
 
     def __str__(self):
         return f"Answer {self.pk}"
