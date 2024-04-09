@@ -11,24 +11,27 @@ class Question(models.Model):
     modified_date = models.DateTimeField(auto_now=True)
     upvotes = models.PositiveIntegerField(default=0)
     downvotes = models.PositiveIntegerField(default=0)
-    upvoted_users = models.ManyToManyField(User, related_name='upvoted_questions', blank=True)
-    downvoted_users = models.ManyToManyField(User, related_name='downvoted_questions', blank=True)
+    upvoted_users = models.ManyToManyField(User, related_name='upvoted_question', blank=True)
+    downvoted_users = models.ManyToManyField(User, related_name='downvoted_question', blank=True)
 
     def __str__(self):
         return f"Answer {self.pk}"
 
     def upvote(self, user):
         if user not in self.upvoted_users.all():
+
+            if user in self.downvoted_users.all():
+                self.downvoted_users.remove(user) 
             self.upvotes += 1
             self.upvoted_users.add(user)
-            self.downvoted_users.remove(user)  # Remove user from downvoted list
             self.save()
 
     def downvote(self, user):
         if user not in self.downvoted_users.all():
+            if user in self.upvoted_users.all():
+                self.upvoted_users.remove(user)
             self.downvotes += 1
             self.downvoted_users.add(user)
-            self.upvoted_users.remove(user)  # Remove user from upvoted list
             self.save()
 
 
@@ -40,22 +43,27 @@ class Answer(models.Model):
     answered_by_host = models.BooleanField(default=False)
     upvotes = models.PositiveIntegerField(default = 0)
     downvotes = models.PositiveIntegerField(default = 0)
-    upvoted_users = models.ManyToManyField(User, related_name='upvoted_answers', blank=True)
-    downvoted_users = models.ManyToManyField(User, related_name='downvoted_answers', blank=True)
+    upvoted_users = models.ManyToManyField(User, related_name='upvoted_answer', blank=True)
+    downvoted_users = models.ManyToManyField(User, related_name='downvoted_answer', blank=True)
+
 
     def __str__(self):
         return f"Answer {self.pk}"
 
     def upvote(self, user):
         if user not in self.upvoted_users.all():
+            if user in self.downvoted_users.all():
+                self.downvoted_users.remove(user) 
             self.upvotes += 1
             self.upvoted_users.add(user)
-            self.downvoted_users.remove(user) 
+
             self.save()
 
     def downvote(self, user):
         if user not in self.downvoted_users.all():
+            if user in self.upvoted_users.all():
+                self.upvoted_users.remove(user)
             self.downvotes += 1
             self.downvoted_users.add(user)
-            self.upvoted_users.remove(user)
+
             self.save()
