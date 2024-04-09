@@ -19,6 +19,7 @@ class Question(models.Model):
 
     def upvote(self, user):
         if user not in self.upvoted_users.all():
+
             if user in self.downvoted_users.all():
                 self.downvoted_users.remove(user) 
             self.upvotes += 1
@@ -45,6 +46,7 @@ class Answer(models.Model):
     upvoted_users = models.ManyToManyField(User, related_name='upvoted_answer', blank=True)
     downvoted_users = models.ManyToManyField(User, related_name='downvoted_answer', blank=True)
 
+
     def __str__(self):
         return f"Answer {self.pk}"
 
@@ -54,6 +56,7 @@ class Answer(models.Model):
                 self.downvoted_users.remove(user) 
             self.upvotes += 1
             self.upvoted_users.add(user)
+
             self.save()
 
     def downvote(self, user):
@@ -62,4 +65,5 @@ class Answer(models.Model):
                 self.upvoted_users.remove(user)
             self.downvotes += 1
             self.downvoted_users.add(user)
+
             self.save()
