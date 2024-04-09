@@ -18,6 +18,7 @@ class EventSerializer(serializers.ModelSerializer):
     poster = serializers.ImageField(read_only=False, required=False)
     upvotes = serializers.IntegerField(read_only=True)
     downvotes = serializers.IntegerField(read_only=True)
+    address = serializers.CharField(required=True)
     # atendees = serializers.PrimaryKeyRelatedField( read_only=True)
     # saved_by = serializers.PrimaryKeyRelatedField( read_only=True)
 
