@@ -48,14 +48,16 @@ class Answer(models.Model):
 
     def upvote(self, user):
         if user not in self.upvoted_users.all():
+            if user in self.downvoted_users.all():
+                self.downvoted_users.remove(user) 
             self.upvotes += 1
             self.upvoted_users.add(user)
-            self.downvoted_users.remove(user) 
             self.save()
 
     def downvote(self, user):
         if user not in self.downvoted_users.all():
+            if user in self.upvoted_users.all():
+                self.upvoted_users.remove(user)
             self.downvotes += 1
             self.downvoted_users.add(user)
-            self.upvoted_users.remove(user)
             self.save()
