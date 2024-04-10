@@ -100,17 +100,19 @@ def custom_404(request, exception):
 @api_view(['POST'])
 # @permission_classes([IsAuthenticated])
 def upvote_event(request, event_id):
+    print(request.data['user_id'])
+
     try:
         event = Event.objects.get(pk=event_id)
     except Event.DoesNotExist:
         return Response({'error': 'Event not found'}, status=404)
 
     if request.method == 'POST':
-        user = request.user
-        if user in event.voters.all():
+        user = User.objects.get(pk=request.data['user_id'])
+        if user in event.upvoters.all():
             return Response({'error': 'You have already upvoted this event'}, status=400)
-        event.voters.add(user)
-        event.upvotes = event.voters.count()
+        event.upvoters.add(user)
+        event.upvotes = event.upvoters.count()
         event.save()
 
         return Response({'status': 'Upvoted successfully',
@@ -122,13 +124,14 @@ def upvote_event(request, event_id):
 @api_view(['POST'])
 # @permission_classes([IsAuthenticated])
 def downvote_event(request, event_id):
+    print(request.data)
     try:
         event = Event.objects.get(pk=event_id)
     except Event.DoesNotExist:
         return Response({'error': 'Event not found'}, status=404)
 
     if request.method == 'POST':
-        user = request.user
+        user = User.objects.get(pk=request.data['user_id'])
         if user in event.downvoters.all():
             return Response({'error': 'You have already downvoted this event'}, status=400)
 
@@ -168,7 +171,7 @@ class RSVPviewset(viewsets.ModelViewSet):
         e_id = self.kwargs['event_pk']
         # return User.objects.filter(events_attending = e_id)
         return Event.objects.get(pk=e_id).atendees.all()
-
+#post???
 
 class CommentCreateView(generics.CreateAPIView):
     queryset = Comment.objects.all()
