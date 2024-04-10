@@ -1,5 +1,6 @@
 from rest_framework import serializers
 from .models import User, Host
+from event.models import Event
 from django.contrib.auth.hashers import make_password
 
 from rest_framework.response import Response
@@ -76,6 +77,10 @@ class UserSerializer(serializers.ModelSerializer):
         validated_data['password'] = make_password(validated_data.get('password'))
         return super(UserSerializer, self).create(validated_data)
 
-
+class EventSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Event
+        fields = ['id', 'name', 'description', 'event_date',
+                  'date_posted', 'poster', 'upvotes', 'downvotes', 'address']
 
 

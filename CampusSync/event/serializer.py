@@ -19,7 +19,7 @@ class EventSerializer(serializers.ModelSerializer):
     upvotes = serializers.IntegerField(read_only=True)
     downvotes = serializers.IntegerField(read_only=True)
     address = serializers.CharField(required=True)
-    # atendees = serializers.PrimaryKeyRelatedField( read_only=True)
+    #atendees = serializers.PrimaryKeyRelatedField( read_only=True)
     # saved_by = serializers.PrimaryKeyRelatedField( read_only=True)
 
     class Meta:
@@ -45,7 +45,7 @@ class EventSerializer(serializers.ModelSerializer):
 class AttendeesSerializer(serializers.ModelSerializer):
     class Meta:
         model = User
-        fields = ['id', 'name', 'email','profile_pic']
+        fields = ['id']
 
 class CommentSerializer(serializers.ModelSerializer):
     class Meta:
