@@ -171,6 +171,28 @@ class RSVPviewset(viewsets.ModelViewSet):
         e_id = self.kwargs['event_pk']
         # return User.objects.filter(events_attending = e_id)
         return Event.objects.get(pk=e_id).atendees.all()
+    
+    def create(self, request, event_pk):
+        e_id = self.kwargs['event_pk']
+        # e_id = request.data['e_id']
+        if 'id' not in request.data:
+            return Response({"id": ["This field is required."]}, status=status.HTTP_400_BAD_REQUEST)
+
+        try:
+            event_instance = Event.objects.get(pk=e_id)
+        except Host.DoesNotExist:
+            return Response({"event_id": ["Invalid host ID."]}, status=status.HTTP_400_BAD_REQUEST)
+
+        user_id = request.data.get('id')
+
+        event_instance.atendees.add(User.objects.get(pk=user_id))
+        event_instance.save()
+
+        serializer = EventSerializer(event_instance)
+
+        # headers = self.get_success_headers(serializer.data)
+        return Response(serializer.data, status=status.HTTP_201_CREATED)
+
 #post???
 
 class CommentCreateView(generics.CreateAPIView):
