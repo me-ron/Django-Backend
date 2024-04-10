@@ -3,7 +3,7 @@ from rest_framework import serializers
 from .models import Event, Comment
 from user.models import Host, User
 
-
+from user.serializer import HostSerializer
 
 
 class EventSerializer(serializers.ModelSerializer):
@@ -19,6 +19,7 @@ class EventSerializer(serializers.ModelSerializer):
     upvotes = serializers.IntegerField(read_only=True)
     downvotes = serializers.IntegerField(read_only=True)
     address = serializers.CharField(required=True)
+    host = HostSerializer()
     # atendees = serializers.PrimaryKeyRelatedField( read_only=True)
     # saved_by = serializers.PrimaryKeyRelatedField( read_only=True)
 
