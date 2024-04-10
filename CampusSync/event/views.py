@@ -13,8 +13,9 @@ from django.shortcuts import render, get_object_or_404
 from rest_framework.response import Response
 
 from .serializer import EventSerializer, CommentSerializer, AttendeesSerializer
+from user.serializer import HostSerializer
 from .models import Event, Comment
-from user.models import Host
+from user.models import Host, User
 # from drf_yasg.utils import swagger_auto_schema
 from rest_framework import viewsets
 from drf_spectacular.utils import extend_schema, OpenApiExample, inline_serializer
@@ -164,7 +165,7 @@ class RSVPviewset(viewsets.ModelViewSet):
     serializer_class = AttendeesSerializer
     def get_queryset(self):
         e_id = self.kwargs['event_pk']
-        return Event.objects.get(event=e_id).atendees.all()
+        return User.objects.filter(events_attending = e_id)
     
 
 

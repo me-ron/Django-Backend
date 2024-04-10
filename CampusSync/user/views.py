@@ -1,4 +1,4 @@
-from .serializer import UserSerializer, HostSerializer
+from .serializer import UserSerializer, HostSerializer, EventSerializer
 from .models import User, Host
 from rest_framework import viewsets
 from rest_framework.views import APIView
@@ -51,3 +51,9 @@ class JWTHome(APIView):
         content = {'message': 'Hello, World!'}
         return Response(content)
  
+class EventViewSet(viewsets.ModelViewSet):
+    serializer_class = EventSerializer
+
+    def get_queryset(self):
+        h_id = self.kwargs['host_pk']
+        return Host.objects.get(host=h_id).events_hosted.all()
