@@ -156,17 +156,18 @@ def search(request):
     events = Event.objects.filter(name__icontains=event_name)
 
     if not events.exists():
-        return Response(status=status.HTTP_404_NOT_FOUND)
-
+        return Response([])
     # Return the list of events
-    return Response(events.values()) 
+    if events.values():
+        return Response(events.values()) 
+    
 
 class RSVPviewset(viewsets.ModelViewSet):
     serializer_class = AttendeesSerializer
     def get_queryset(self):
         e_id = self.kwargs['event_pk']
-        return User.objects.filter(events_attending = e_id)
-    
+        # return User.objects.filter(events_attending = e_id)
+        return Event.objects.get(pk=e_id).atendees.all()
 
 
 class CommentCreateView(generics.CreateAPIView):
