@@ -1,3 +1,13 @@
+from rest_framework.decorators import api_view, permission_classes
+from django.shortcuts import render
+from rest_framework.response import Response
+from .serializer import EventSerializer
+from .models import Event
+
+
+import mimetypes
+from django.http import HttpResponse
+
 from django.shortcuts import render, get_object_or_404
 
 from rest_framework.response import Response
@@ -8,8 +18,8 @@ from .models import Event, Comment
 from user.models import Host, User
 # from drf_yasg.utils import swagger_auto_schema
 from rest_framework import viewsets
-from rest_framework.decorators import api_view
 from drf_spectacular.utils import extend_schema, OpenApiExample, inline_serializer
+from rest_framework.permissions import IsAuthenticated
 
 from rest_framework import status
 from rest_framework import generics
@@ -87,6 +97,53 @@ def custom_404(request, exception):
     print("$$")
     return render(request, 'event/404.html', status=404)
 
+@api_view(['POST'])
+# @permission_classes([IsAuthenticated])
+def upvote_event(request, event_id):
+    print(request.data['user_id'])
+
+    try:
+        event = Event.objects.get(pk=event_id)
+    except Event.DoesNotExist:
+        return Response({'error': 'Event not found'}, status=404)
+
+    if request.method == 'POST':
+        user = User.objects.get(pk=request.data['user_id'])
+        if user in event.upvoters.all():
+            return Response({'error': 'You have already upvoted this event'}, status=400)
+        event.upvoters.add(user)
+        event.upvotes = event.upvoters.count()
+        event.save()
+
+        return Response({'status': 'Upvoted successfully',
+                         'event_id': event_id,
+                         'upvotes': event.upvotes})
+    else:
+        return Response({'error': 'Invalid request method'}, status=405)
+    
+@api_view(['POST'])
+# @permission_classes([IsAuthenticated])
+def downvote_event(request, event_id):
+    print(request.data)
+    try:
+        event = Event.objects.get(pk=event_id)
+    except Event.DoesNotExist:
+        return Response({'error': 'Event not found'}, status=404)
+
+    if request.method == 'POST':
+        user = User.objects.get(pk=request.data['user_id'])
+        if user in event.downvoters.all():
+            return Response({'error': 'You have already downvoted this event'}, status=400)
+
+        event.downvoters.add(user)
+        event.downvotes = event.downvoters.count()
+        event.save()
+
+        return Response({'status': 'Downvoted successfully',
+                         'event_id': event_id,
+                         'downvotes': event.downvotes})
+    else:
+        return Response({'error': 'Invalid request method'}, status=405)
 
 
 @api_view(['GET'])
@@ -102,15 +159,41 @@ def search(request):
     events = Event.objects.filter(name__icontains=event_name)
 
     if not events.exists():
-        return Response(status=status.HTTP_404_NOT_FOUND)
-
+        return Response([])
     # Return the list of events
-    return Response(events.values()) 
+    if events.values():
+        return Response(events.values()) 
+    
 
 class RSVPviewset(viewsets.ModelViewSet):
     serializer_class = AttendeesSerializer
     def get_queryset(self):
         e_id = self.kwargs['event_pk']
+        # return User.objects.filter(events_attending = e_id)
+        return Event.objects.get(pk=e_id).atendees.all()
+    
+    def create(self, request, event_pk):
+        e_id = self.kwargs['event_pk']
+        # e_id = request.data['e_id']
+        if 'id' not in request.data:
+            return Response({"id": ["This field is required."]}, status=status.HTTP_400_BAD_REQUEST)
+
+        try:
+            event_instance = Event.objects.get(pk=e_id)
+        except Host.DoesNotExist:
+            return Response({"event_id": ["Invalid host ID."]}, status=status.HTTP_400_BAD_REQUEST)
+
+        user_id = request.data.get('id')
+
+        event_instance.atendees.add(User.objects.get(pk=user_id))
+        event_instance.save()
+
+        serializer = EventSerializer(event_instance)
+
+        # headers = self.get_success_headers(serializer.data)
+        return Response(serializer.data, status=status.HTTP_201_CREATED)
+
+#post???
         return User.objects.filter(events_attending = e_id)
     
 
@@ -123,6 +206,19 @@ class CommentCreateView(generics.CreateAPIView):
     def perform_create(self, serializer):
         # Automatically handle event association and other fields if needed
         serializer.save()
+
+    def create(self, request, *args, **kwargs):
+        serializer = self.get_serializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+        self.perform_create(serializer)
+        
+        event = serializer.validated_data.get('event')
+        comments = Comment.objects.filter(event=event).order_by("-date_posted")
+        
+        # Modify the serializer class if needed to include many=True
+        comments_serializer = CommentSerializer(comments, many=True)
+        
+        return Response(comments_serializer.data, status=status.HTTP_201_CREATED)
 
 class EventCommentListView(generics.ListAPIView):
     serializer_class = CommentSerializer

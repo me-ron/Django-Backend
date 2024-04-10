@@ -12,6 +12,8 @@ class Event(models.Model):
     poster = models.ImageField(upload_to='_event/posters', default='_event/defaults/default_poster.png', null=True, blank=True)
     upvotes = models.IntegerField(default=0)
     downvotes  = models.IntegerField(default=0)
+    upvoters = models.ManyToManyField(User, related_name='upvote_events')
+    downvoters = models.ManyToManyField(User, related_name='downvote_events')
     host = models.ForeignKey(Host, related_name='events_hosted',null=True, blank=True, on_delete=models.CASCADE)
     atendees = models.ManyToManyField(User, related_name='events_attending', blank=True)
     saved_by = models.ManyToManyField(User, related_name='saved_events', blank=True)

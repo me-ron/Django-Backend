@@ -3,7 +3,7 @@ from rest_framework import serializers
 from .models import Event, Comment
 from user.models import Host, User
 
-
+from user.serializer import HostSerializer
 
 
 class EventSerializer(serializers.ModelSerializer):
@@ -19,6 +19,11 @@ class EventSerializer(serializers.ModelSerializer):
     upvotes = serializers.IntegerField(read_only=True)
     downvotes = serializers.IntegerField(read_only=True)
     address = serializers.CharField(required=True)
+
+    #atendees = serializers.PrimaryKeyRelatedField( read_only=True)
+    host = HostSerializer(read_only=True)
+    # atendees = serializers.PrimaryKeyRelatedField( read_only=True)
+
     #atendees = serializers.PrimaryKeyRelatedField( read_only=True)
     # saved_by = serializers.PrimaryKeyRelatedField( read_only=True)
 
@@ -62,7 +67,8 @@ class CommentSerializer(serializers.ModelSerializer):
             # except Event.DoesNotExist:
             #     raise serializers.ValidationError({'event': 'Invalid event ID'})
             comment = Comment.objects.create(event=event, **validated_data)
-            return comment
+            comments = Comment.objects.filter(event = event)
+            return comments
         else:
             raise serializers.ValidationError({'event': 'Event ID is required'})
 
