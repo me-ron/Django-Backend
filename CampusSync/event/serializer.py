@@ -66,7 +66,8 @@ class CommentSerializer(serializers.ModelSerializer):
             # except Event.DoesNotExist:
             #     raise serializers.ValidationError({'event': 'Invalid event ID'})
             comment = Comment.objects.create(event=event, **validated_data)
-            return comment
+            comments = Comment.objects.filter(event = event)
+            return comments
         else:
             raise serializers.ValidationError({'event': 'Event ID is required'})
 

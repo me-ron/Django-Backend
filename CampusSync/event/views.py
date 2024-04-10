@@ -178,6 +178,19 @@ class CommentCreateView(generics.CreateAPIView):
         # Automatically handle event association and other fields if needed
         serializer.save()
 
+    def create(self, request, *args, **kwargs):
+        serializer = self.get_serializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+        self.perform_create(serializer)
+        
+        event = serializer.validated_data.get('event')
+        comments = Comment.objects.filter(event=event).order_by("-date_posted")
+        
+        # Modify the serializer class if needed to include many=True
+        comments_serializer = CommentSerializer(comments, many=True)
+        
+        return Response(comments_serializer.data, status=status.HTTP_201_CREATED)
+
 class EventCommentListView(generics.ListAPIView):
     serializer_class = CommentSerializer
 
