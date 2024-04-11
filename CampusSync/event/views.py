@@ -52,9 +52,9 @@ class EventViewSet(viewsets.ModelViewSet):
         # Create the event object
         self.perform_create(serializer)
 
-        event_instance = serializer.instance
+        # event_instance = serializer.instance
 
-        event_instance.host = host_instance
+        # event_instance.host = host_instance
 
         headers = self.get_success_headers(serializer.data)
         return Response(serializer.data, status=status.HTTP_201_CREATED, headers=headers)

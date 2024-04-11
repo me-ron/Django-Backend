@@ -21,7 +21,7 @@ class EventSerializer(serializers.ModelSerializer):
     address = serializers.CharField(required=True)
 
     #atendees = serializers.PrimaryKeyRelatedField( read_only=True)
-    host = HostSerializer(instance=Host.objects.all(), read_only=True)
+    host = HostSerializer(required=False)
     # atendees = serializers.PrimaryKeyRelatedField( read_only=True)
 
     # saved_by = serializers.PrimaryKeyRelatedField( read_only=True)
@@ -41,7 +41,7 @@ class EventSerializer(serializers.ModelSerializer):
         # Assuming 'host' is the foreign key field in Event model
         host_instance = Host.objects.get(pk=host_id)
         event.host = host_instance
-        # event.save()
+        event.save()
         
         return event
     
