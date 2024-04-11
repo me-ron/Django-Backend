@@ -52,9 +52,9 @@ class EventViewSet(viewsets.ModelViewSet):
         # Create the event object
         self.perform_create(serializer)
 
-        event_instance = serializer.instance
+        # event_instance = serializer.instance
 
-        event_instance.host = host_instance
+        # event_instance.host = host_instance
 
         headers = self.get_success_headers(serializer.data)
         return Response(serializer.data, status=status.HTTP_201_CREATED, headers=headers)
@@ -94,13 +94,11 @@ def order_by_downvote(request):
 
 
 def custom_404(request, exception):
-    print("$$")
     return render(request, 'event/404.html', status=404)
 
 @api_view(['POST'])
 # @permission_classes([IsAuthenticated])
 def upvote_event(request, event_id):
-    print(request.data['user_id'])
 
     try:
         event = Event.objects.get(pk=event_id)
@@ -108,11 +106,32 @@ def upvote_event(request, event_id):
         return Response({'error': 'Event not found'}, status=404)
 
     if request.method == 'POST':
+        if 'user_id' not in request.data:
+            return Response({"user_id": ["This field is required."]}, status=status.HTTP_400_BAD_REQUEST)
+
         user = User.objects.get(pk=request.data['user_id'])
         if user in event.upvoters.all():
-            return Response({'error': 'You have already upvoted this event'}, status=400)
+            event.upvoters.remove(user)
+            event.upvotes = event.upvoters.count()
+            user.notifications -= 1
+            event.notifications -= 1
+
+            event.save()
+
+            return Response({'success': 'Your upvote is removed from this event'
+                             ,'event_id': event_id
+                            ,'upvotes': event.upvotes})
+        
+        if user in event.downvoters.all():
+            event.downvoters.remove(user)
+            event.downvotes = event.downvoters.count()
+
         event.upvoters.add(user)
         event.upvotes = event.upvoters.count()
+        event.notifications += 1
+        user.notifications += 1
+
+
         event.save()
 
         return Response({'status': 'Upvoted successfully',
@@ -124,19 +143,39 @@ def upvote_event(request, event_id):
 @api_view(['POST'])
 # @permission_classes([IsAuthenticated])
 def downvote_event(request, event_id):
-    print(request.data)
     try:
         event = Event.objects.get(pk=event_id)
     except Event.DoesNotExist:
         return Response({'error': 'Event not found'}, status=404)
 
     if request.method == 'POST':
+        if 'user_id' not in request.data:
+            return Response({"user_id": ["This field is required."]}, status=status.HTTP_400_BAD_REQUEST)
+
         user = User.objects.get(pk=request.data['user_id'])
         if user in event.downvoters.all():
-            return Response({'error': 'You have already downvoted this event'}, status=400)
+            event.downvoters.remove(user)
+            event.downvotes = event.downvoters.count()
+            
+            user.notifications -= 1
+            event.notifications -= 1
+
+            event.save()
+
+            return Response({'success': 'Your downvote is removed from this event'
+                             ,'event_id': event_id
+                            ,'upvotes': event.upvotes})
+        
+        if user in event.upvoters.all():
+            event.upvoters.remove(user)
+            event.upvotes = event.upvoters.count()
 
         event.downvoters.add(user)
         event.downvotes = event.downvoters.count()
+        event_instance.notifications += 1
+        user.notifications += 1
+
+
         event.save()
 
         return Response({'status': 'Downvoted successfully',
@@ -186,6 +225,8 @@ class RSVPviewset(viewsets.ModelViewSet):
         user_id = request.data.get('id')
 
         event_instance.atendees.add(User.objects.get(pk=user_id))
+        
+        event_instance.notifications += 1
         event_instance.save()
 
         serializer = EventSerializer(event_instance)

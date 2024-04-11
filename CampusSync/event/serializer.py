@@ -21,7 +21,7 @@ class EventSerializer(serializers.ModelSerializer):
     address = serializers.CharField(required=True)
 
     #atendees = serializers.PrimaryKeyRelatedField( read_only=True)
-    host = HostSerializer(read_only=True)
+    host = HostSerializer(required=False)
     # atendees = serializers.PrimaryKeyRelatedField( read_only=True)
 
     #atendees = serializers.PrimaryKeyRelatedField( read_only=True)
@@ -42,7 +42,7 @@ class EventSerializer(serializers.ModelSerializer):
         # Assuming 'host' is the foreign key field in Event model
         host_instance = Host.objects.get(pk=host_id)
         event.host = host_instance
-        # event.save()
+        event.save()
         
         return event
     
@@ -62,11 +62,7 @@ class CommentSerializer(serializers.ModelSerializer):
         # Assuming `event` is provided in the request to link the comment
         event = validated_data.pop('event', None)
         if event:
-            # try:
-            #     event = Event.objects.get(id=event_id)
-            # except Event.DoesNotExist:
-            #     raise serializers.ValidationError({'event': 'Invalid event ID'})
-            comment = Comment.objects.create(event=event, **validated_data)
+            # comment = Comment.objects.create(event=event, **validated_data)
             comments = Comment.objects.filter(event = event)
             return comments
         else:

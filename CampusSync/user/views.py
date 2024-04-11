@@ -1,4 +1,4 @@
-from .serializer import UserSerializer, HostSerializer, EventSerializer
+from .serializer import UserSerializer, HostSerializer
 from .models import User, Host
 from rest_framework import viewsets
 from rest_framework.views import APIView
@@ -8,6 +8,8 @@ from rest_framework_simplejwt.authentication import JWTAuthentication
 
 from rest_framework import status
 
+
+from event.serializer import EventSerializer
  
 class UserViewSet(viewsets.ModelViewSet):
     """
@@ -25,23 +27,26 @@ class HostViewSet(viewsets.ModelViewSet):
     queryset = Host.objects.all()
     serializer_class = HostSerializer
 
-    def create(self, request, *args, **kwargs):
-        serializer = self.get_serializer(data=request.data)
-        serializer.is_valid(raise_exception=True)
+    # def create(self, request, *args, **kwargs):
+    #     serializer = self.get_serializer(data=request.data)
+    #     serializer.is_valid(raise_exception=True)
         
-        # Get the user_id from the request data
-        user_id = request.data.get('user_id')
+    #     self.perform_create(serializer)
 
-        # Call super().create() to properly perform creation
-        self.perform_create(serializer)
+    #     # Get the user_id from the request data
+    #     user_id = request.data.get('user_id')
 
-        # Add the user to the admins field of the host
-        host_instance = serializer.instance
-        user_instance = User.objects.get(pk=user_id)  # Assuming User model exists
-        host_instance.admins.add(user_instance)
+    #     # Call super().create() to properly perform creation
+
+    #     # Add the user to the admins field of the host
+    #     # host_instance = serializer.instance
+    #     user_instance = User.objects.get(pk=user_id)
+    #     # print(user_instance)
+    #     # for user in user_instance:  # Assuming User model exists
+    #     # host_instance.admins.set(user_instance)
         
-        headers = self.get_success_headers(serializer.data)
-        return Response(serializer.data, status=status.HTTP_201_CREATED, headers=headers)
+    #     headers = self.get_success_headers(serializer.data)
+    #     return Response(serializer.data, status=status.HTTP_201_CREATED, headers=headers)
 
 class JWTHome(APIView):
     authentication_classes = [JWTAuthentication]
@@ -56,4 +61,4 @@ class EventViewSet(viewsets.ModelViewSet):
 
     def get_queryset(self):
         h_id = self.kwargs['host_pk']
-        return Host.objects.get(host=h_id).events_hosted.all()
+        return Host.objects.get(pk=h_id).events_hosted.all()

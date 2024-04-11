@@ -26,7 +26,7 @@ class HostSerializer(serializers.ModelSerializer):
     id = serializers.IntegerField(
         read_only=True,
         )
-    user_id = serializers.IntegerField(write_only=True)
+    # user_id = serializers.IntegerField(write_only=True)
     description = serializers.CharField(required=True)
     account_pic = serializers.ImageField(required=False, read_only=False)    
     admins = serializers.PrimaryKeyRelatedField(queryset=User.objects.all(), required=False, many=True)
@@ -37,20 +37,22 @@ class HostSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Host 
-        fields = ['id', 'hostname', 'description', 'user_id', 'account_pic'
+        fields = ['id', 'hostname', 'description', 'account_pic'
                   , 'admins', 'notifications']
     
     
-    def create(self, validated_data):
-        user_id = validated_data.pop('user_id')
-
-        host = Host.objects.create(**validated_data)
-
-        # Assuming 'admins' is the many-to-many field in Host model
-        user_instance = User.objects.get(pk=user_id)  # Assuming User model exists
-        host.admins.add(user_instance)
+    # def create(self, validated_data):
+    #     # user_id = validated_data.pop('user_id')
+    #     print(validated_data)
+    #     # host = Host.objects.create(**validated_data)
+    
+    #     # host = Host.objects.get(hostname=validated_data['hostname'])
+    #     # Assuming 'admins' is the many-to-many field in Host model
+    #     # user_instance = User.objects.get(pk=user_id)  # Assuming User model exists
+    #     # host
+    #     # host.admins.set(user_instance)
         
-        return host
+    #     return Host.objects.get(pk=1)
         
 class UserSerializer(serializers.ModelSerializer):
 
@@ -77,10 +79,10 @@ class UserSerializer(serializers.ModelSerializer):
         validated_data['password'] = make_password(validated_data.get('password'))
         return super(UserSerializer, self).create(validated_data)
 
-class EventSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = Event
-        fields = ['id', 'name', 'description', 'event_date',
-                  'date_posted', 'poster', 'upvotes', 'downvotes', 'address']
+# class EventSerializer(serializers.ModelSerializer):
+#     class Meta:
+#         model = Event
+#         fields = ['id', 'name', 'description', 'event_date',
+#                   'date_posted', 'poster', 'upvotes', 'downvotes', 'address']
 
 
