@@ -65,9 +65,9 @@ class EventViewSet(viewsets.ModelViewSet):
         return Host.objects.get(pk=h_id).events_hosted.all()
     
 
-@api_view(['GET'])
+@api_view(['POST'])
 def events_by_host(request):
-    if request.method != 'GET':
+    if request.method != 'POST':
         return Response(status=status.HTTP_405_METHOD_NOT_ALLOWED)
     
     if 'host_id' not in request.data:
