@@ -6,6 +6,8 @@ from user.models import User, Host
 class Question(models.Model):
     question = models.TextField()
     author = models.ForeignKey(User, related_name='questions', on_delete=models.CASCADE, null=True)
+    # author_id = models.ForeignKey(User, related_name='questions', on_delete=models.CASCADE, null=False)
+
     is_answered = models.BooleanField(default=False)
     created_date = models.DateTimeField(auto_now_add=True)  
     modified_date = models.DateTimeField(auto_now=True)

@@ -8,8 +8,9 @@ from rest_framework_simplejwt.authentication import JWTAuthentication
 
 from rest_framework import status
 
-
 from event.serializer import EventSerializer
+
+from rest_framework.decorators import api_view
  
 class UserViewSet(viewsets.ModelViewSet):
     """
@@ -62,3 +63,17 @@ class EventViewSet(viewsets.ModelViewSet):
     def get_queryset(self):
         h_id = self.kwargs['host_pk']
         return Host.objects.get(pk=h_id).events_hosted.all()
+    
+
+@api_view(['POST'])
+def events_by_host(request):
+    if request.method != 'POST':
+        return Response(status=status.HTTP_405_METHOD_NOT_ALLOWED)
+    
+    if 'host_id' not in request.data:
+            return Response({"host_id": ["This field is required."]}, status=status.HTTP_400_BAD_REQUEST)
+
+    host_id = request.data['host_id']
+    host = Host.objects.get(pk=host_id)
+    events = host.events_hosted.all()
+    return Response(events.values())
