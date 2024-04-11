@@ -112,7 +112,18 @@ def upvote_event(request, event_id):
 
         user = User.objects.get(pk=request.data['user_id'])
         if user in event.upvoters.all():
-            return Response({'error': 'You have already upvoted this event'}, status=400)
+            event.upvoters.remove(user)
+            event.upvotes = event.upvoters.count()
+            event.save()
+
+            return Response({'success': 'Your upvote is removed from this event'
+                             ,'event_id': event_id
+                            ,'upvotes': event.upvotes})
+        
+        if user in event.downvoters.all():
+            event.downvoters.remove(user)
+            event.downvotes = event.downvoters.count()
+
         event.upvoters.add(user)
         event.upvotes = event.upvoters.count()
         event.save()
@@ -137,7 +148,17 @@ def downvote_event(request, event_id):
 
         user = User.objects.get(pk=request.data['user_id'])
         if user in event.downvoters.all():
-            return Response({'error': 'You have already downvoted this event'}, status=400)
+            event.downvoters.remove(user)
+            event.downvotes = event.downvoters.count()
+            event.save()
+
+            return Response({'success': 'Your downvote is removed from this event'
+                             ,'event_id': event_id
+                            ,'upvotes': event.upvotes})
+        
+        if user in event.upvoters.all():
+            event.upvoters.remove(user)
+            event.upvotes = event.upvoters.count()
 
         event.downvoters.add(user)
         event.downvotes = event.downvoters.count()
