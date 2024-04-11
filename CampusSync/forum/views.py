@@ -7,11 +7,11 @@ from .serializers import QuestionSerializer, AnswerSerializer
 class QuestionViewSet(viewsets.ModelViewSet):
     queryset = Question.objects.all().order_by('-created_date')
     serializer_class = QuestionSerializer
-    permission_classes = [permissions.IsAuthenticatedOrReadOnly]
+    # permission_classes = [permissions.IsAuthenticatedOrReadOnly]
 
 class AnswerViewSet(viewsets.ModelViewSet):
     serializer_class = AnswerSerializer
-    permission_classes = [permissions.IsAuthenticatedOrReadOnly]
+    # permission_classes = [permissions.IsAuthenticatedOrReadOnly]
 
     def get_queryset(self):
         q_id = self.kwargs['question_pk']
