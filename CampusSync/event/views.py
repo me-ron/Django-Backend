@@ -100,7 +100,6 @@ def custom_404(request, exception):
 @api_view(['POST'])
 # @permission_classes([IsAuthenticated])
 def upvote_event(request, event_id):
-    print(request.data['user_id'])
 
     try:
         event = Event.objects.get(pk=event_id)
@@ -108,6 +107,9 @@ def upvote_event(request, event_id):
         return Response({'error': 'Event not found'}, status=404)
 
     if request.method == 'POST':
+        if 'user_id' not in request.data:
+            return Response({"user_id": ["This field is required."]}, status=status.HTTP_400_BAD_REQUEST)
+
         user = User.objects.get(pk=request.data['user_id'])
         if user in event.upvoters.all():
             return Response({'error': 'You have already upvoted this event'}, status=400)
@@ -124,13 +126,15 @@ def upvote_event(request, event_id):
 @api_view(['POST'])
 # @permission_classes([IsAuthenticated])
 def downvote_event(request, event_id):
-    print(request.data)
     try:
         event = Event.objects.get(pk=event_id)
     except Event.DoesNotExist:
         return Response({'error': 'Event not found'}, status=404)
 
     if request.method == 'POST':
+        if 'user_id' not in request.data:
+            return Response({"user_id": ["This field is required."]}, status=status.HTTP_400_BAD_REQUEST)
+
         user = User.objects.get(pk=request.data['user_id'])
         if user in event.downvoters.all():
             return Response({'error': 'You have already downvoted this event'}, status=400)
