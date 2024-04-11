@@ -61,11 +61,7 @@ class CommentSerializer(serializers.ModelSerializer):
         # Assuming `event` is provided in the request to link the comment
         event = validated_data.pop('event', None)
         if event:
-            # try:
-            #     event = Event.objects.get(id=event_id)
-            # except Event.DoesNotExist:
-            #     raise serializers.ValidationError({'event': 'Invalid event ID'})
-            comment = Comment.objects.create(event=event, **validated_data)
+            # comment = Comment.objects.create(event=event, **validated_data)
             comments = Comment.objects.filter(event = event)
             return comments
         else:

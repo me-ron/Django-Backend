@@ -94,7 +94,6 @@ def order_by_downvote(request):
 
 
 def custom_404(request, exception):
-    print("$$")
     return render(request, 'event/404.html', status=404)
 
 @api_view(['POST'])
@@ -114,6 +113,9 @@ def upvote_event(request, event_id):
         if user in event.upvoters.all():
             event.upvoters.remove(user)
             event.upvotes = event.upvoters.count()
+            user.notifications -= 1
+            event.notifications -= 1
+
             event.save()
 
             return Response({'success': 'Your upvote is removed from this event'
@@ -126,6 +128,10 @@ def upvote_event(request, event_id):
 
         event.upvoters.add(user)
         event.upvotes = event.upvoters.count()
+        event.notifications += 1
+        user.notifications += 1
+
+
         event.save()
 
         return Response({'status': 'Upvoted successfully',
@@ -150,6 +156,10 @@ def downvote_event(request, event_id):
         if user in event.downvoters.all():
             event.downvoters.remove(user)
             event.downvotes = event.downvoters.count()
+            
+            user.notifications -= 1
+            event.notifications -= 1
+
             event.save()
 
             return Response({'success': 'Your downvote is removed from this event'
@@ -162,6 +172,10 @@ def downvote_event(request, event_id):
 
         event.downvoters.add(user)
         event.downvotes = event.downvoters.count()
+        event_instance.notifications += 1
+        user.notifications += 1
+
+
         event.save()
 
         return Response({'status': 'Downvoted successfully',
@@ -211,6 +225,8 @@ class RSVPviewset(viewsets.ModelViewSet):
         user_id = request.data.get('id')
 
         event_instance.atendees.add(User.objects.get(pk=user_id))
+        
+        event_instance.notifications += 1
         event_instance.save()
 
         serializer = EventSerializer(event_instance)

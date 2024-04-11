@@ -22,16 +22,24 @@ class Question(models.Model):
 
             if user in self.downvoted_users.all():
                 self.downvoted_users.remove(user) 
+                user.notifications -= 1
+
             self.upvotes += 1
             self.upvoted_users.add(user)
+            
+            user.notifications += 1
             self.save()
 
     def downvote(self, user):
         if user not in self.downvoted_users.all():
             if user in self.upvoted_users.all():
                 self.upvoted_users.remove(user)
+                user.notifications -= 1
+            
             self.downvotes += 1
             self.downvoted_users.add(user)
+            
+            user.notifications += 1
             self.save()
 
 
@@ -54,16 +62,22 @@ class Answer(models.Model):
         if user not in self.upvoted_users.all():
             if user in self.downvoted_users.all():
                 self.downvoted_users.remove(user) 
+                user.notifications -= 1
+
             self.upvotes += 1
             self.upvoted_users.add(user)
 
+            user.notifications += 1
             self.save()
 
     def downvote(self, user):
         if user not in self.downvoted_users.all():
             if user in self.upvoted_users.all():
                 self.upvoted_users.remove(user)
+                user.notifications -= 1
+
             self.downvotes += 1
             self.downvoted_users.add(user)
 
+            user.notifications += 1
             self.save()

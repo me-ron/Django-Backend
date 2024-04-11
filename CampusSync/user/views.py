@@ -1,4 +1,4 @@
-from .serializer import UserSerializer, HostSerializer, EventSerializer
+from .serializer import UserSerializer, HostSerializer
 from .models import User, Host
 from rest_framework import viewsets
 from rest_framework.views import APIView
@@ -8,6 +8,8 @@ from rest_framework_simplejwt.authentication import JWTAuthentication
 
 from rest_framework import status
 
+
+from event.serializer import EventSerializer
  
 class UserViewSet(viewsets.ModelViewSet):
     """
@@ -59,4 +61,4 @@ class EventViewSet(viewsets.ModelViewSet):
 
     def get_queryset(self):
         h_id = self.kwargs['host_pk']
-        return Host.objects.get(host=h_id).events_hosted.all()
+        return Host.objects.get(pk=h_id).events_hosted.all()
