@@ -38,7 +38,7 @@ class HostSerializer(serializers.ModelSerializer):
     class Meta:
         model = Host 
         fields = ['id', 'hostname', 'description', 'account_pic'
-                  , 'admins', 'notifications']
+                  , 'admins', 'followers', 'notifications']
     
     
     # def create(self, validated_data):
@@ -86,3 +86,10 @@ class UserSerializer(serializers.ModelSerializer):
 #                   'date_posted', 'poster', 'upvotes', 'downvotes', 'address']
 
 
+class HostDetailSerializer(serializers.ModelSerializer):
+    admins = UserSerializer(many = True)
+    followers = UserSerializer(many = True)
+    class Meta:
+        model = Host 
+        fields = ['id', 'hostname', 'description', 'account_pic'
+                  , 'admins', 'followers', 'notifications']

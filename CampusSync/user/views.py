@@ -1,4 +1,4 @@
-from .serializer import UserSerializer, HostSerializer
+from .serializer import HostDetailSerializer, UserSerializer, HostSerializer
 from .models import User, Host
 from rest_framework import viewsets
 from rest_framework.views import APIView
@@ -26,7 +26,11 @@ class HostViewSet(viewsets.ModelViewSet):
     A simple ViewSet for viewing and editing Events.
     """
     queryset = Host.objects.all()
-    serializer_class = HostSerializer
+    
+    def get_serializer_class(self):
+        if self.action in ['create', 'update']:
+            return HostSerializer
+        return HostDetailSerializer
 
     # def create(self, request, *args, **kwargs):
     #     serializer = self.get_serializer(data=request.data)

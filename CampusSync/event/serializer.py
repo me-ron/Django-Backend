@@ -24,6 +24,7 @@ class EventSerializer(serializers.ModelSerializer):
     host = HostSerializer(required=False)
     # atendees = serializers.PrimaryKeyRelatedField( read_only=True)
 
+    #atendees = serializers.PrimaryKeyRelatedField( read_only=True)
     # saved_by = serializers.PrimaryKeyRelatedField( read_only=True)
 
     class Meta:
