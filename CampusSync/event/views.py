@@ -18,7 +18,7 @@ from .models import Event, Comment
 from user.models import Host, User
 # from drf_yasg.utils import swagger_auto_schema
 from rest_framework import viewsets
-from drf_spectacular.utils import extend_schema, OpenApiExample, inline_serializer
+# from drf_spectacular.utils import extend_schema, OpenApiExample, inline_serializer
 from rest_framework.permissions import IsAuthenticated
 
 from rest_framework import status
