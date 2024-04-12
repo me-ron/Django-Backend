@@ -96,9 +96,6 @@ def upvote_event(request, event_id):
                              ,'event_id': event_id
                             ,'upvotes': event.upvotes})
         
-        if user in event.downvoters.all():
-            event.downvoters.remove(user)
-            event.downvotes = event.downvoters.count()
 
         event.upvoters.add(user)
         event.upvotes = event.upvoters.count()
@@ -138,15 +135,11 @@ def downvote_event(request, event_id):
 
             return Response({'success': 'Your downvote is removed from this event'
                              ,'event_id': event_id
-                            ,'upvotes': event.upvotes})
-        
-        if user in event.upvoters.all():
-            event.upvoters.remove(user)
-            event.upvotes = event.upvoters.count()
+                            ,'downvotes': event.upvotes})
 
         event.downvoters.add(user)
         event.downvotes = event.downvoters.count()
-        event_instance.notifications += 1
+        event.notifications += 1
         user.notifications += 1
 
 
