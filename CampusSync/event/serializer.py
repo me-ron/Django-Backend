@@ -65,13 +65,13 @@ class CommentSerializer(serializers.ModelSerializer):
         fields = '__all__'
         read_only_fields = ('id', 'date_posted', 'upvotes', 'downvotes')
 
-    def create(self, validated_data):
-        # Assuming `event` is provided in the request to link the comment
-        event = validated_data.pop('event', None)
-        if event:
-            # comment = Comment.objects.create(event=event, **validated_data)
-            comments = Comment.objects.filter(event = event)
-            return comments
-        else:
-            raise serializers.ValidationError({'event': 'Event ID is required'})
+    # def create(self, validated_data):
+    #     # Assuming `event` is provided in the request to link the comment
+    #     event = validated_data.pop('event', None)
+    #     if event:
+    #         # comment = Comment.objects.create(event=event, **validated_data)
+    #         comments = Comment.objects.filter(event = event)
+    #         return comments
+    #     else:
+    #         raise serializers.ValidationError({'event': 'Event ID is required'})
 

@@ -247,10 +247,12 @@ class CommentCreateView(generics.CreateAPIView):
         serializer = self.get_serializer(data=request.data)
         serializer.is_valid(raise_exception=True)
         self.perform_create(serializer)
-        
+        print(serializer.instance.commentor)
         event = serializer.validated_data.get('event')
-        comments = Comment.objects.filter(event=event).order_by("-date_posted")
-        
+        # print(event.comments)
+        # comments = Comment.objects.filter(event=event).order_by("-date_posted")
+        comments = event.comments.all()
+        # print(comments)
         # Modify the serializer class if needed to include many=True
         comments_serializer = CommentSerializer(comments, many=True)
         
@@ -265,4 +267,6 @@ class EventCommentListView(generics.ListAPIView):
         """
         event_id = self.kwargs['event_id']
         event = get_object_or_404(Event, id=event_id)
-        return Comment.objects.filter(event=event)
+        print(event.comments.all())
+        return event.comments.all()
+        # return Comment.objects.filter(event=event)
