@@ -135,7 +135,7 @@ def downvote_event(request, event_id):
 
             return Response({'success': 'Your downvote is removed from this event'
                              ,'event_id': event_id
-                            ,'downvotes': event.upvotes})
+                            ,'downvotes': event.downvotes})
 
         event.downvoters.add(user)
         event.downvotes = event.downvoters.count()
@@ -176,6 +176,7 @@ class RSVPviewset(viewsets.ModelViewSet):
     def get_queryset(self):
         e_id = self.kwargs['event_pk']
         # return User.objects.filter(events_attending = e_id)
+        print("DDDD")
         return Event.objects.get(pk=e_id).atendees.all()
     
     def create(self, request, event_pk):

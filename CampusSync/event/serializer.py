@@ -23,6 +23,8 @@ class EventSerializer(serializers.ModelSerializer):
 
     #atendees = serializers.PrimaryKeyRelatedField( read_only=True)
     host = HostSerializer(required=False, read_only=True)
+    poster = serializers.ImageField(required=False, read_only=False)    
+
     # atendees = serializers.PrimaryKeyRelatedField( read_only=True)
 
     #atendees = serializers.PrimaryKeyRelatedField( read_only=True)

@@ -191,7 +191,9 @@ def events_rsvpd(request):
         return Response({"user_id": ["Invalid host ID."]}, status=status.HTTP_400_BAD_REQUEST)
 
     events_rsvpd = user.events_attending.all()
-    return Response(events_rsvpd.values())
+    serializer = EventSerializer(events_rsvpd, many=True)
+    print("FG")
+    return Response(serializer.data)
 
 
 
