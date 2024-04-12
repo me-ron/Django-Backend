@@ -1,4 +1,12 @@
-from .views import UserViewSet, JWTHome, HostViewSet, EventViewSet, events_by_host, hosts_under_user
+from .views import (UserViewSet
+                    , JWTHome
+                    , HostViewSet
+                    , EventViewSet
+                    , events_by_host
+                    , hosts_under_user
+                    ,user_following
+                    , follow_host)
+
 from rest_framework.routers import DefaultRouter
 from rest_framework_nested.routers import NestedDefaultRouter
 from django.urls import path
@@ -14,5 +22,7 @@ urlpatterns = router.urls + nested.urls +[
     path('', JWTHome.as_view()),
     path('events_by_host/', events_by_host, name='events-by-host'),
     path('hosts_under_user/', hosts_under_user, name='hosts-under-a-user'),
+    path('user_following/', user_following, name='user-folowing'),
+    path('follow_host/', follow_host, name='follow-host'),
 
 ]

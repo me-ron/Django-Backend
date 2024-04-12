@@ -100,3 +100,52 @@ def hosts_under_user(request):
 
     hosts = user.hosts_owned.all()
     return Response(hosts.values())
+
+
+
+@api_view(['POST'])
+def user_following(request):
+    if request.method != 'POST':
+        return Response(status=status.HTTP_405_METHOD_NOT_ALLOWED)
+    
+    if 'user_id' not in request.data:
+            return Response({"user_id": ["This field is required."]}, status=status.HTTP_400_BAD_REQUEST)
+
+    user_id = request.data['user_id']
+
+    try:
+        user = User.objects.get(pk=user_id)
+    except User.DoesNotExist:
+        return Response({"user_id": ["Invalid host ID."]}, status=status.HTTP_400_BAD_REQUEST)
+
+    followings = user.following.all()
+    return Response(followings.values())
+
+@api_view(['POST'])
+def follow_host(request):
+    if request.method != 'POST':
+        return Response(status=status.HTTP_405_METHOD_NOT_ALLOWED)
+    
+    if 'user_id' not in request.data:
+            return Response({"user_id": ["This field is required."]}, status=status.HTTP_400_BAD_REQUEST)
+
+    elif 'host_id' not in request.data:
+            return Response({"host_id": ["This field is required."]}, status=status.HTTP_400_BAD_REQUEST)
+
+    user_id = request.data['user_id']
+    host_id = request.data['host_id']
+
+    try:
+        user = User.objects.get(pk=user_id)
+    except User.DoesNotExist:
+        return Response({"user_id": ["Invalid host ID."]}, status=status.HTTP_400_BAD_REQUEST)
+
+    try:
+        host = Host.objects.get(pk=host_id)
+    except Host.DoesNotExist:
+        return Response({"host_id": ["Invalid host ID."]}, status=status.HTTP_400_BAD_REQUEST)
+
+    host.followers.add(user)
+    host.save()
+    serializer = HostSerializer(host)
+    return Response(serializer.data)

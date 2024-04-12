@@ -234,11 +234,6 @@ class RSVPviewset(viewsets.ModelViewSet):
         # headers = self.get_success_headers(serializer.data)
         return Response(serializer.data, status=status.HTTP_201_CREATED)
 
-#post???
-        return User.objects.filter(events_attending = e_id)
-    
-
-
 class CommentCreateView(generics.CreateAPIView):
     queryset = Comment.objects.all()
     serializer_class = CommentSerializer
