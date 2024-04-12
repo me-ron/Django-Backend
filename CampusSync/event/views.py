@@ -82,8 +82,17 @@ def upvote_event(request, event_id):
     if request.method == 'POST':
         if 'user_id' not in request.data:
             return Response({"user_id": ["This field is required."]}, status=status.HTTP_400_BAD_REQUEST)
-
+        
         user = User.objects.get(pk=request.data['user_id'])
+
+
+        if user in event.downvoters.all():
+            event.downvoters.remove(user)
+            event.downvotes = event.downvoters.count()
+            
+            user.notifications -= 1
+            event.notifications -= 1
+
         if user in event.upvoters.all():
             event.upvoters.remove(user)
             event.upvotes = event.upvoters.count()
@@ -124,6 +133,15 @@ def downvote_event(request, event_id):
             return Response({"user_id": ["This field is required."]}, status=status.HTTP_400_BAD_REQUEST)
 
         user = User.objects.get(pk=request.data['user_id'])
+
+        if user in event.upvoters.all():
+            event.upvoters.remove(user)
+            event.upvotes = event.upvotes.count()
+            
+            user.notifications -= 1
+            event.notifications -= 1
+
+
         if user in event.downvoters.all():
             event.downvoters.remove(user)
             event.downvotes = event.downvoters.count()
