@@ -11,6 +11,8 @@ from rest_framework import status
 from event.serializer import EventSerializer
 
 from rest_framework.decorators import api_view
+
+from forum.serializers import QuestionSerializer
  
 class UserViewSet(viewsets.ModelViewSet):
     """
@@ -212,5 +214,5 @@ def questions_by_user(request):
     except User.DoesNotExist:
         return Response({"user_id": ["Invalid host ID."]}, status=status.HTTP_400_BAD_REQUEST)
 
-    questions = user.questions.all()
-    return Response(questions.values())
+    serializer = QuestionSerializer(user.questions.all(), many=True)
+    return Response(serializer.data)
