@@ -32,32 +32,32 @@ class EventViewSet(viewsets.ModelViewSet):
     queryset = Event.objects.all()
     serializer_class = EventSerializer
 
-    def create(self, request, *args, **kwargs):
-        # Check if 'host_id' is provided in the request data
-        if 'host_id' not in request.data:
-            return Response({"host_id": ["This field is required."]}, status=status.HTTP_400_BAD_REQUEST)
+    # def create(self, request, *args, **kwargs):
+    #     # Check if 'host_id' is provided in the request data
+    #     if 'host_id' not in request.data:
+    #         return Response({"host_id": ["This field is required."]}, status=status.HTTP_400_BAD_REQUEST)
 
-        serializer = self.get_serializer(data=request.data)
-        serializer.is_valid(raise_exception=True)
+    #     serializer = self.get_serializer(data=request.data)
+    #     serializer.is_valid(raise_exception=True)
 
-        # Get host_id from the request data
-        host_id = request.data.get('host_id')
+    #     # Get host_id from the request data
+    #     host_id = request.data.get('host_id')
 
-        # Validate if the host exists
-        try:
-            host_instance = Host.objects.get(pk=host_id)
-        except Host.DoesNotExist:
-            return Response({"host_id": ["Invalid host ID."]}, status=status.HTTP_400_BAD_REQUEST)
+    #     # Validate if the host exists
+    #     try:
+    #         host_instance = Host.objects.get(pk=host_id)
+    #     except Host.DoesNotExist:
+    #         return Response({"host_id": ["Invalid host ID."]}, status=status.HTTP_400_BAD_REQUEST)
 
-        # Create the event object
-        self.perform_create(serializer)
+    #     # Create the event object
+    #     self.perform_create(serializer)
 
-        # event_instance = serializer.instance
+    #     # event_instance = serializer.instance
 
-        # event_instance.host = host_instance
+    #     # event_instance.host = host_instance
 
-        headers = self.get_success_headers(serializer.data)
-        return Response(serializer.data, status=status.HTTP_201_CREATED, headers=headers)
+    #     headers = self.get_success_headers(serializer.data)
+    #     return Response(serializer.data, status=status.HTTP_201_CREATED, headers=headers)
 
 @api_view(['GET'])
 def order_by_recent(request):
