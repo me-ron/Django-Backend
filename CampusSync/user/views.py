@@ -149,10 +149,30 @@ def follow_host(request):
     except Host.DoesNotExist:
         return Response({"host_id": ["Invalid host ID."]}, status=status.HTTP_400_BAD_REQUEST)
 
+
+    if user in host.followers.all():
+        host.followers.remove(user)
+        
+        host.notifications -= 1
+
+        host.save()
+
+        serializer = UserSerializer(host.followers.all(), many=True)
+
+        return Response({'success': 'Your follow is removed from this host'
+                            ,'followers': serializer.data})
+    
+
     host.followers.add(user)
+    host.notifications += 1
     host.save()
-    serializer = HostSerializer(host)
-    return Response(serializer.data)
+
+    serializer = UserSerializer(host.followers.all(), many=True)
+
+    return Response({'success': 'Your follow is added to this host'
+                            ,'followers': serializer.data})
+    
+
 
 
 @api_view(['POST'])
