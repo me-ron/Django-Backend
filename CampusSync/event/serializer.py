@@ -21,7 +21,7 @@ class EventSerializer(serializers.ModelSerializer):
     address = serializers.CharField(required=True)
 
     #atendees = serializers.PrimaryKeyRelatedField( read_only=True)
-    host = HostSerializer(required=False)
+    host = HostSerializer(required=False, read_only=True)
     # atendees = serializers.PrimaryKeyRelatedField( read_only=True)
 
     #atendees = serializers.PrimaryKeyRelatedField( read_only=True)

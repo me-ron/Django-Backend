@@ -4,8 +4,10 @@ from .views import (UserViewSet
                     , EventViewSet
                     , events_by_host
                     , hosts_under_user
-                    ,user_following
-                    , follow_host)
+                    , user_following
+                    , follow_host
+                    , events_rsvpd
+                    , questions_by_user)
 
 from rest_framework.routers import DefaultRouter
 from rest_framework_nested.routers import NestedDefaultRouter
@@ -24,5 +26,7 @@ urlpatterns = router.urls + nested.urls +[
     path('hosts_under_user/', hosts_under_user, name='hosts-under-a-user'),
     path('user_following/', user_following, name='user-folowing'),
     path('follow_host/', follow_host, name='follow-host'),
+    path('events_rsvpd/', events_rsvpd, name='events-rsvpd'),
+    path('questions_by_user/', questions_by_user, name='user-questions'),
 
 ]

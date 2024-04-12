@@ -18,6 +18,8 @@ class UserViewSet(viewsets.ModelViewSet):
     """
     queryset = User.objects.all()
     serializer_class = UserSerializer
+    # http_method_names = ['delete', ]
+
 
 
 
@@ -26,6 +28,8 @@ class HostViewSet(viewsets.ModelViewSet):
     A simple ViewSet for viewing and editing Events.
     """
     queryset = Host.objects.all()
+    # http_method_names = ['delete', ]
+
     
     def get_serializer_class(self):
         if self.action in ['create', 'update']:
@@ -149,3 +153,42 @@ def follow_host(request):
     host.save()
     serializer = HostSerializer(host)
     return Response(serializer.data)
+
+
+@api_view(['POST'])
+def events_rsvpd(request):
+    if request.method != 'POST':
+        return Response(status=status.HTTP_405_METHOD_NOT_ALLOWED)
+    
+    if 'user_id' not in request.data:
+            return Response({"user_id": ["This field is required."]}, status=status.HTTP_400_BAD_REQUEST)
+
+    user_id = request.data['user_id']
+
+    try:
+        user = User.objects.get(pk=user_id)
+    except User.DoesNotExist:
+        return Response({"user_id": ["Invalid host ID."]}, status=status.HTTP_400_BAD_REQUEST)
+
+    events_rsvpd = user.events_attending.all()
+    return Response(events_rsvpd.values())
+
+
+
+@api_view(['POST'])
+def questions_by_user(request):
+    if request.method != 'POST':
+        return Response(status=status.HTTP_405_METHOD_NOT_ALLOWED)
+    
+    if 'user_id' not in request.data:
+            return Response({"user_id": ["This field is required."]}, status=status.HTTP_400_BAD_REQUEST)
+
+    user_id = request.data['user_id']
+
+    try:
+        user = User.objects.get(pk=user_id)
+    except User.DoesNotExist:
+        return Response({"user_id": ["Invalid host ID."]}, status=status.HTTP_400_BAD_REQUEST)
+
+    questions = user.questions.all()
+    return Response(questions.values())
