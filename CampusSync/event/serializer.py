@@ -5,6 +5,7 @@ from user.models import Host, User
 
 from user.serializer import HostSerializer
 
+from user.serializer import UserSerializer
 
 class EventSerializer(serializers.ModelSerializer):
     id = serializers.IntegerField(
@@ -53,9 +54,15 @@ class AttendeesSerializer(serializers.ModelSerializer):
         fields = ['id']
 
 class CommentSerializer(serializers.ModelSerializer):
+    commentor = UserSerializer(read_only=True)
+    commentor_id = serializers.PrimaryKeyRelatedField(
+        queryset=User.objects.all(), source='commentor', write_only=True)
+    # author = RelatedFieldAlternative(queryset=User.objects.all(), serializer=UserSerializer)
+
     class Meta:
         model = Comment
-        fields = ['id', 'content', 'upvotes', 'date_posted', 'event']
+        # fields = ['id', 'content', 'upvotes', 'date_posted', 'event', 'commentor']
+        fields = '__all__'
         read_only_fields = ('id', 'date_posted', 'upvotes', 'downvotes')
 
     def create(self, validated_data):
