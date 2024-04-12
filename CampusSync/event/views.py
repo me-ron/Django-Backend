@@ -136,7 +136,7 @@ def downvote_event(request, event_id):
 
         if user in event.upvoters.all():
             event.upvoters.remove(user)
-            event.upvotes = event.upvotes.count()
+            event.upvotes = event.upvoters.count()
             
             user.notifications -= 1
             event.notifications -= 1
