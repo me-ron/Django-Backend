@@ -24,6 +24,9 @@ from rest_framework.permissions import IsAuthenticated
 from rest_framework import status
 from rest_framework import generics
 
+from rest_framework import filters
+
+
 
 class EventViewSet(viewsets.ModelViewSet):
     """
@@ -31,6 +34,9 @@ class EventViewSet(viewsets.ModelViewSet):
     """
     queryset = Event.objects.all()
     serializer_class = EventSerializer
+
+    search_fields = ['name']
+    filter_backends = (filters.SearchFilter,)
 
 
 @api_view(['GET'])
@@ -170,24 +176,6 @@ def downvote_event(request, event_id):
         return Response({'error': 'Invalid request method'}, status=405)
 
 
-@api_view(['GET'])
-def search(request):
-    if request.method != 'GET':
-        return Response(status=status.HTTP_405_METHOD_NOT_ALLOWED)
-
-    
-    if 'event_name' not in request.data:
-        return Response({'error': 'Missing required field: event_name'}, status=status.HTTP_400_BAD_REQUEST)
-
-    event_name = request.data['event_name']
-    events = Event.objects.filter(name__icontains=event_name)
-
-    if not events.exists():
-        return Response([])
-    # Return the list of events
-    if events.values():
-        return Response(events.values()) 
-    
 
 class RSVPviewset(viewsets.ModelViewSet):
     serializer_class = AttendeesSerializer

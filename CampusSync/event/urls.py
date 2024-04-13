@@ -1,6 +1,6 @@
 from .views import (EventViewSet
                     , RSVPviewset
-                    , search, order_by_old,
+                    , order_by_old,
                       order_by_downvote,
                       order_by_recent,
                       order_by_upvote, 
@@ -31,7 +31,6 @@ urlpatterns =  router.urls + nested.urls + [
     path('event-order-old/', order_by_old),
     path('comments/new/', CommentCreateView.as_view(), name='comment-create'),
     path('<int:event_id>/comments/', EventCommentListView.as_view(), name='event-comments-list'),
-    path('search/', search, name='event-search'),
     
 ]
 

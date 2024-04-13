@@ -9,10 +9,17 @@ from rest_framework import status
 
 from user.models import User
 
+from rest_framework import filters
+
+
 class QuestionViewSet(viewsets.ModelViewSet):
     queryset = Question.objects.all().order_by('-created_date')
     serializer_class = QuestionSerializer
     # permission_classes = [permissions.IsAuthenticatedOrReadOnly]
+
+
+    search_fields = ['question']
+    filter_backends = (filters.SearchFilter,)
 
 class AnswerViewSet(viewsets.ModelViewSet):
     serializer_class = AnswerSerializer
