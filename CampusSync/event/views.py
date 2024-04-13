@@ -80,7 +80,7 @@ def upvote_event(request, event_id):
         return Response({'error': 'Event not found'}, status=404)
 
     if request.method == 'POST':
-        if 'user_id' not in request.data:
+        if 'user_id' not in request.data or not request.data['user_id']:
             return Response({"user_id": ["This field is required."]}, status=status.HTTP_400_BAD_REQUEST)
         
         user = User.objects.get(pk=request.data['user_id'])
@@ -129,7 +129,7 @@ def downvote_event(request, event_id):
         return Response({'error': 'Event not found'}, status=404)
 
     if request.method == 'POST':
-        if 'user_id' not in request.data:
+        if 'user_id' not in request.data or not request.data['user_id']:
             return Response({"user_id": ["This field is required."]}, status=status.HTTP_400_BAD_REQUEST)
 
         user = User.objects.get(pk=request.data['user_id'])
