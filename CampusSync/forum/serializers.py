@@ -23,6 +23,9 @@ class QuestionSerializer(serializers.ModelSerializer):
     author = UserSerializer(read_only=True)
     author_id = serializers.PrimaryKeyRelatedField(
         queryset=User.objects.all(), source='author', write_only=True)
+    id = serializers.IntegerField(
+        read_only=True,
+        )
     # author = RelatedFieldAlternative(queryset=User.objects.all(), serializer=UserSerializer)
 
     class Meta:
