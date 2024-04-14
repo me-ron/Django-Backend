@@ -13,6 +13,9 @@ from event.serializer import EventSerializer
 from rest_framework.decorators import api_view
 
 from forum.serializers import QuestionSerializer
+
+from rest_framework import filters
+
  
 class UserViewSet(viewsets.ModelViewSet):
     """
@@ -33,6 +36,10 @@ class HostViewSet(viewsets.ModelViewSet):
     # http_method_names = ['delete', ]
 
     
+    search_fields = ['hostname']
+    filter_backends = (filters.SearchFilter,)
+
+
     def get_serializer_class(self):
         if self.action in ['create', 'update']:
             return HostSerializer
