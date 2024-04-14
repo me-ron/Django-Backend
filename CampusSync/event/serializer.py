@@ -5,6 +5,7 @@ from user.models import Host, User
 
 from user.serializer import HostSerializer
 
+from user.serializer import UserSerializer
 
 class EventSerializer(serializers.ModelSerializer):
     id = serializers.IntegerField(
@@ -21,7 +22,9 @@ class EventSerializer(serializers.ModelSerializer):
     address = serializers.CharField(required=True)
 
     #atendees = serializers.PrimaryKeyRelatedField( read_only=True)
-    host = HostSerializer(required=False)
+    host = HostSerializer(required=False, read_only=True)
+    poster = serializers.ImageField(required=False, read_only=False)    
+
     # atendees = serializers.PrimaryKeyRelatedField( read_only=True)
 
     #atendees = serializers.PrimaryKeyRelatedField( read_only=True)
@@ -32,20 +35,18 @@ class EventSerializer(serializers.ModelSerializer):
         fields = ['id', 'host_id', 'host', 'name', 'description', 'event_date'
                   ,'date_posted', 'poster', 'upvotes', 'downvotes', 'address']
 
-    def create(self, validated_data):
-        # Remove 'host_id' from validated_data since it's not a field of Event model
-        host_id = validated_data.pop('host_id')
+    # def create(self, validated_data):
+    #     host_id = validated_data.pop('host_id')
 
-        # Create event object
-        event = Event.objects.create(**validated_data)
-
-        # Assuming 'host' is the foreign key field in Event model
-        host_instance = Host.objects.get(pk=host_id)
-        event.host = host_instance
-        event.save()
+    def perform_create(self, serializer):
+        user_id = self.request.data.get('user_id')  # Assuming user_id is provided in the request data
+        try:
+            host_user = User.objects.get(pk=user_id)
+        except User.DoesNotExist:
+            return Response({"error": "User does not exist"}, status=status.HTTP_400_BAD_REQUEST)
         
-        return event
-    
+        serializer.save(host=host_user)
+   
 
 class AttendeesSerializer(serializers.ModelSerializer):
     class Meta:
@@ -53,18 +54,14 @@ class AttendeesSerializer(serializers.ModelSerializer):
         fields = ['id']
 
 class CommentSerializer(serializers.ModelSerializer):
+    commentor = UserSerializer(read_only=True)
+    commentor_id = serializers.PrimaryKeyRelatedField(
+        queryset=User.objects.all(), source='commentor', write_only=True)
+    # author = RelatedFieldAlternative(queryset=User.objects.all(), serializer=UserSerializer)
+
     class Meta:
         model = Comment
-        fields = ['id', 'content', 'upvotes', 'date_posted', 'event']
+        # fields = ['id', 'content', 'upvotes', 'date_posted', 'event', 'commentor']
+        fields = '__all__'
         read_only_fields = ('id', 'date_posted', 'upvotes', 'downvotes')
-
-    def create(self, validated_data):
-        # Assuming `event` is provided in the request to link the comment
-        event = validated_data.pop('event', None)
-        if event:
-            # comment = Comment.objects.create(event=event, **validated_data)
-            comments = Comment.objects.filter(event = event)
-            return comments
-        else:
-            raise serializers.ValidationError({'event': 'Event ID is required'})
 

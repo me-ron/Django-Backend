@@ -4,6 +4,8 @@ from user.models import User, Host
 
 
 class Question(models.Model):
+    id = models.IntegerField(primary_key=True)
+
     question = models.TextField()
     author = models.ForeignKey(User, related_name='questions', on_delete=models.CASCADE, null=True)
     # author_id = models.ForeignKey(User, related_name='questions', on_delete=models.CASCADE, null=False)

@@ -70,6 +70,9 @@ class UserSerializer(serializers.ModelSerializer):
     notifications = serializers.IntegerField(
         read_only=True,
         )
+    
+    profile_pic = serializers.ImageField(required=False, read_only=False)    
+
 
     class Meta:
         model = User
@@ -89,6 +92,8 @@ class UserSerializer(serializers.ModelSerializer):
 class HostDetailSerializer(serializers.ModelSerializer):
     admins = UserSerializer(many = True)
     followers = UserSerializer(many = True)
+    account_pic = serializers.ImageField(required=False, read_only=False)    
+
     class Meta:
         model = Host 
         fields = ['id', 'hostname', 'description', 'account_pic'
